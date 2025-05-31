@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Meal Recommendation - Menu</title>
+  <link rel="stylesheet" href="../css/menu_style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Check login status -->
+  <!--
+  <script>
+    const user = localStorage.getItem('user');
+    if (!user) {
+      alert("Login is required.");
+      window.location.href = "login.html";
+    }
+  </script>
+  -->
+</head>
+<body>
+
+  <!-- Navigation bar -->
+  <nav>
+    <div class="nav-left">
+        <a href="#">Home</a>
+        <a href="#">Menu</a>
+        <a href="#">My Page</a>
+    </div>
+    <div class="nav-right">
+        <a href="#" id="logout">Logout</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Calories display -->
+    <div class="calories">
+      <h2>Calories consumed today: <strong>1,200 kcal</strong></h2>
+      <p>Remaining to goal: <strong>800 kcal</strong></p>
+    </div>
+
+    <!-- Recommended menu slider -->
+    <div class="slider">
+      <div class="slides" id="slides">
+        <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1" alt="Salad" data-name="Salad">
+        <img src="https://images.unsplash.com/photo-1512058564366-c9e3ecff1a1b" alt="Brown Rice Bento" data-name="Brown Rice Bento">
+        <img src="https://images.unsplash.com/photo-1604908177225-d2aa1e3e3b94" alt="Veggie Smoothie" data-name="Veggie Smoothie">
+        <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836" alt="Avocado Toast" data-name="Avocado Toast">
+      </div>
+    </div>
+
+    <!-- Search and hashtags -->
+    <div class="search-section">
+      <input type="text" placeholder="Search for a menu...">
+      <button>Search</button>
+      <div class="hashtags">
+        <span>#Diet</span>
+        <span>#HighProtein</span>
+        <span>#LowCarb</span>
+        <span>#Vegetarian</span>
+        <span>#QuickMeal</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div id="modal" class="modal hidden">
+    <div class="modal-content large">
+      <span class="close">&times;</span>
+      <h2 id="modal-name"></h2>
+      <p><strong>Calories:</strong> <span id="modal-calories"></span></p>
+      <canvas id="nutritionChart" width="250" height="250"></canvas>
+      <p id="modal-description"></p>
+      <button id="addToMeal">Add to Meal</button>
+
+      <!-- 👇 Calendar section -->
+      <div id="calendar-section" class="hidden">
+        <h3>Select Date and Meal Time</h3>
+        <input type="date" id="selectDate">
+        <select id="mealTime">
+          <option value="">-- Select Meal Time --</option>
+          <option value="Breakfast">Breakfast</option>
+          <option value="Lunch">Lunch</option>
+          <option value="Dinner">Dinner</option>
+          <option value="Snack">Snack</option>
+        </select>
+        <button id="confirmAdd">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript files -->
+  <script src="../script/slider.js"></script>
+  <script src="../script/modal.js"></script>
+
+  <!-- Logout functionality -->
+  <script>
+    document.getElementById('logout').addEventListener('click', function () {
+      localStorage.removeItem('user');
+      window.location.href = 'login.html';
+    });
+  </script>
+
+</body>
+</html>
