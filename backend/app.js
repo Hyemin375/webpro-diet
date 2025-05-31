@@ -7,8 +7,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// 회원가입, 로그인
 const authRoutes = require('./routes/auth');
 app.use('/api/v1/auth', authRoutes);
+
+// goal 설정
+const goalRoutes = require('./routes/goal');
+app.use('/api/v1/goal', goalRoutes);
 
 // 테스트용 라우트
 app.get('/', (req, res) => res.send('NutriMate API running'));
