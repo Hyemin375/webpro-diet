@@ -64,3 +64,28 @@ exports.deleteAccount = async (req, res) => {
     res.status(500).json({ error: 'Server error occurred.' });
   }
 };
+
+exports.updateAccount = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { userName, userSex, userAge, userWeight, userHeight } = req.body;
+
+    const user = await User.findByPk(userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    // 업데이트할 필드만 적용
+    if (userName) user.userName = userName;
+    if (userSex) user.userSex = userSex;
+    if (userAge) user.userAge = userAge;
+    if (userWeight) user.userWeight = userWeight;
+    if (userHeight) user.userHeight = userHeight;
+
+    await user.save();
+
+    res.status(200).json({ message: 'User information updated successfully', user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Failed to update user information' });
+  }
+};
+
