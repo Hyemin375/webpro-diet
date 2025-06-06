@@ -9,4 +9,10 @@ router.post('/', authenticate, goalController.setGoal);
 // 목표 조회 라우터
 router.get('/', authenticate, goalController.getGoal);
 
+// 목표 수정 라우터
+router.put('/', authenticate, goalController.updateGoal);
+
+// 목표 삭제 라우터
+router.delete('/', authenticate, goalController.deleteGoal);
+
 module.exports = router;
