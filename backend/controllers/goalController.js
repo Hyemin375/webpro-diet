@@ -53,4 +53,40 @@ exports.setGoal = async (req, res) => {
     console.error(err);
     res.status(500).json({ message: '서버 오류 발생' });
   }
+
+};
+
+exports.getGoal = async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const goal = await Goal.findOne({ where: { userId } });
+
+    if (!goal) {
+      return res.status(404).json({
+        status: 404,
+        message: '아직 목표 설정을 하지 않았습니다. 목표 설정을 진행해주세요.',
+        code: 'GOAL_NOT_SET'
+      });
+    }
+
+    return res.status(200).json({
+      goal: {
+        userId: goal.userId,
+        calories: goal.goalCalories,
+        protein: goal.goalProtein,
+        fat: goal.goalFat,
+        carbohydrate: goal.goalCarbon,
+        sugar: goal.goalSugar,
+        cholesterol: goal.goalChole,
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: 500,
+      message: '서버 오류가 발생했습니다.',
+      code: 'SERVER_ERROR'
+    });
+  }
 };
