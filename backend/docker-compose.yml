@@ -4,11 +4,12 @@ services:
     image: mysql:8
     container_name: nutrimate-db
     ports:
-      - "3306:3306"
+      - "4306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: 12345678
       MYSQL_DATABASE: nutrimate
     volumes:
+    
       - db_data:/var/lib/mysql
     restart: always
 

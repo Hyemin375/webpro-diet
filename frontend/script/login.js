@@ -1,14 +1,26 @@
-document.getElementById('loginForm').addEventListener('submit', function (e) {
+document.getElementById('loginForm').addEventListener('submit', async function (e) {
   e.preventDefault();
 
-  const inputId = parseInt(document.getElementById('userid').value); // ID must be numeric
-  const inputPw = document.getElementById('password').value;
-  const user = JSON.parse(localStorage.getItem('user'));
+  const userName = document.getElementById('userid').value; // 👈 userId → userName
+  const userPw = document.getElementById('password').value;
 
-  if (user && user.userId === inputId && user.userPw === inputPw) {
-    alert("Login successful!");
-    window.location.href = "menu.html";
-  } else {
-    alert("Incorrect username or password.");
+  try {
+    const res = await fetch('http://localhost:5000/api/v1/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userName, userPw })
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      localStorage.setItem('user', JSON.stringify(data));
+      alert("로그인 성공!");
+      window.location.href = "menu.html";
+    } else {
+      alert("로그인 실패: " + data.message);
+    }
+  } catch (err) {
+    alert("서버 응답 실패");
   }
 });

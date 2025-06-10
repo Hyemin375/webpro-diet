@@ -1,4 +1,4 @@
-document.getElementById('registerForm').addEventListener('submit', function (e) {
+document.getElementById('registerForm').addEventListener('submit', async function (e) {
   e.preventDefault();
 
   const user = {
@@ -11,13 +11,21 @@ document.getElementById('registerForm').addEventListener('submit', function (e) 
     userHeight: parseFloat(document.getElementById('userHeight').value)
   };
 
-  // Basic field validation
-  if (!user.userSex || isNaN(user.userId) || isNaN(user.userAge)) {
-    alert("Please check your input values.");
-    return;
-  }
+  try {
+    const res = await fetch('http://localhost:5000/api/v1/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(user)
+    });
 
-  localStorage.setItem('user', JSON.stringify(user));
-  alert("Registration completed! Redirecting to the login page.");
-  window.location.href = "login.html";
+    if (res.ok) {
+      alert("회원가입 성공!");
+      window.location.href = "login.html";
+    } else {
+      const err = await res.json();
+      alert("에러: " + err.message);
+    }
+  } catch (err) {
+    alert("서버 연결 실패");
+  }
 });

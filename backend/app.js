@@ -7,6 +7,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+
 // 회원가입, 로그인
 const authRoutes = require('./routes/auth');
 app.use('/api/v1/auth', authRoutes);
@@ -18,10 +19,15 @@ app.use('/api/v1/goal', goalRoutes);
 // 테스트용 라우트
 app.get('/', (req, res) => res.send('NutriMate API running'));
 
-// DB 연결 및 서버 시작
-sequelize.sync({ alter: true }).then(() => {
-  console.log('✅ DB connected');
-  app.listen(process.env.PORT || 4000, () => {
-    console.log('🚀 Server running');
+const PORT = process.env.PORT || 5000;
+
+sequelize.sync({ alter: true })
+  .then(() => {
+    console.log('✅ DB connected');
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on http://localhost:${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('❌ Sequelize sync failed:', err);
   });
-});
