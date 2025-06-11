@@ -4,10 +4,11 @@ const { generateToken } = require('../utils/token');
 
 exports.register = async (req, res) => {
   try {
-    const { userPw, userName, userSex, userAge, userWeight, userHeight } = req.body;
+    const { userLoginId,userPw, userName, userSex, userAge, userWeight, userHeight } = req.body;
 
     const hashedPw = await bcrypt.hash(userPw, 10);
     const user = await User.create({
+      userLoginId,
       userPw: hashedPw,
       userName,
       userSex,
@@ -25,9 +26,9 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
-    const { userName, userPw } = req.body;
+    const { userLoginId, userPw } = req.body;
 
-    const user = await User.findOne({ where: { userName } });
+    const user = await User.findOne({ where: { userLoginId } });
     if (!user) return res.status(401).json({ message: 'Invalid credentials' });
 
     const valid = await bcrypt.compare(userPw, user.userPw);
