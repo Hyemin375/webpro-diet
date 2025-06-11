@@ -27,6 +27,7 @@
         <a href="#">My Page</a>
     </div>
     <div class="nav-right">
+        <a href="#" id="delete-account">Delete Account</a>
         <a href="#" id="logout">Logout</a>
     </div>
   </nav>
@@ -99,6 +100,27 @@
       window.location.href = 'login.html';
     });
   </script>
+
+  <script src="../script/delete.js"></script>
+  <script>
+    document.getElementById('delete-account').addEventListener('click', function (e) {
+      e.preventDefault();
+      deleteAccount();
+    });
+  </script>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const email = localStorage.getItem('token');
+      const deleteBtn = document.getElementById('delete-account');
+      if (!token&&deleteBtn) {
+        deleteBtn.style.display = 'none';
+      }
+
+      
+    });
+  </script>
+
 
 </body>
 </html>

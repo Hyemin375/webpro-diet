@@ -5,7 +5,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
   const userPw = document.getElementById('password').value;
 
   try {
-    const res = await fetch('http://localhost:5000/api/v1/auth/login', {
+    const res = await fetch('http://localhost:4000/api/v1/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userName, userPw })
@@ -14,7 +14,13 @@ document.getElementById('loginForm').addEventListener('submit', async function (
     const data = await res.json();
 
     if (res.ok) {
-      localStorage.setItem('user', JSON.stringify(data));
+      localStorage.setItem('token', data.accessToken);
+      localStorage.setItem('userName', userName);  
+
+      console.log("Token:", data.accessToken);
+      console.log("Saved token:", localStorage.getItem('token'));
+
+
       alert("로그인 성공!");
       window.location.href = "menu.html";
     } else {
@@ -24,3 +30,4 @@ document.getElementById('loginForm').addEventListener('submit', async function (
     alert("서버 응답 실패");
   }
 });
+
