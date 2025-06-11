@@ -44,13 +44,15 @@ exports.login = async (req, res) => {
 
 exports.deleteAccount = async (req, res) => {
   try {
+    console.log('[DELETE] req.user:', req.user);
+
     const userId = req.user.id;
 
-    const user = await User.findByPk(userId);
+    const user = await User.findOne({ where: { userId } });
     if (!user) {
       return res.status(404).json({ error: 'User not found.' });
     }
-
+    
     // 관련 데이터 삭제 (optional, cascading 되어 있으면 생략 가능)
     await Goal.destroy({ where: { userId } });
     await Tracking.destroy({ where: { userId } });
