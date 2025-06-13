@@ -1,45 +1,35 @@
-const token = localStorage.getItem('token');
-
-
-function getCurrentUserName() {
-  return localStorage.getItem('userName');
-}
-
 async function deleteAccount() {
-  const userName = getCurrentUserName();
   const token = localStorage.getItem('token');
+  const userName = localStorage.getItem('userName');
 
-  if (!userName) {
-    alert('User name not found.');
+  if (!token) {
+    alert('로그인이 필요합니다.');
     return;
   }
 
-  const confirmDelete = confirm(`Are you sure you want to delete the account for ${userName}?`);
+  const confirmDelete = confirm(`정말로 해당 계정을 삭제하시겠습니까?`);
   if (!confirmDelete) return;
 
   try {
     const response = await fetch('http://localhost:4000/api/v1/auth/delete', {
       method: 'DELETE',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify({ userName }),
+        'Authorization': `Bearer ${token}`
+      }
     });
 
     const data = await response.json();
 
     if (response.ok) {
-      alert('Account successfully deleted.');
+      alert('계정이 성공적으로 삭제되었습니다.');
       localStorage.removeItem('token');
       localStorage.removeItem('userName');
-      window.location.href = './index.html';
+      window.location.href = 'index.html';
     } else {
-        console.log("백엔드 응답:", data);
-      alert('Failed to delete account: ' + data.message);
+      alert('계정 삭제 실패: ' + (data.message || data.error || '알 수 없는 오류'));
     }
   } catch (err) {
-    console.error(err);
-    alert('Server error occurred.');
+    console.error('삭제 요청 중 오류:', err);
+    alert('서버 오류가 발생했습니다.');
   }
 }

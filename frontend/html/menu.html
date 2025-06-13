@@ -22,13 +22,18 @@
   <!-- Navigation bar -->
   <nav>
     <div class="nav-left">
-        <a href="#">Home</a>
-        <a href="#">Menu</a>
+        <a href="index.html">Home</a>
+        <a href="menu.html">Menu</a>
         <a href="#">My Page</a>
     </div>
     <div class="nav-right">
-        <a href="#" id="delete-account">Delete Account</a>
-        <a href="#" id="logout">Logout</a>
+      <!-- 로그인/회원가입 버튼 -->
+      <a href="login.html" id="login-link" style="display: none;">Login</a>
+      <a href="register.html" id="register-link" style="display: none;">Register</a>
+
+      <!-- 로그아웃/회원탈퇴 -->
+      <a href="#" id="delete-account" style="display: none;">Delete Account</a>
+      <a href="#" id="logout" style="display: none;">Logout</a>
     </div>
   </nav>
 
@@ -93,16 +98,18 @@
   <script src="../script/slider.js"></script>
   <script src="../script/modal.js"></script>
 
-  <!-- Logout functionality -->
+  <!-- 수정된 부분만 하이라이트 -->
   <script>
+    // ✅ 로그아웃 버튼
     document.getElementById('logout').addEventListener('click', function () {
-      localStorage.removeItem('user');
+      localStorage.clear(); // 모든 정보 제거
       window.location.href = 'login.html';
     });
   </script>
 
   <script src="../script/delete.js"></script>
   <script>
+    // ✅ 삭제 버튼 이벤트 연결
     document.getElementById('delete-account').addEventListener('click', function (e) {
       e.preventDefault();
       deleteAccount();
@@ -111,16 +118,28 @@
 
   <script>
     window.addEventListener('DOMContentLoaded', () => {
-      const email = localStorage.getItem('token');
-      const deleteBtn = document.getElementById('delete-account');
-      if (!token&&deleteBtn) {
-        deleteBtn.style.display = 'none';
-      }
+      const token = localStorage.getItem('token');
 
-      
+      const deleteBtn = document.getElementById('delete-account');
+      const logoutBtn = document.getElementById('logout');
+      const loginLink = document.getElementById('login-link');
+      const registerLink = document.getElementById('register-link');
+
+      if (token) {
+        // 로그인 상태
+        if (deleteBtn) deleteBtn.style.display = 'inline';
+        if (logoutBtn) logoutBtn.style.display = 'inline';
+        if (loginLink) loginLink.style.display = 'none';
+        if (registerLink) registerLink.style.display = 'none';
+      } else {
+        // 비로그인 상태
+        if (deleteBtn) deleteBtn.style.display = 'none';
+        if (logoutBtn) logoutBtn.style.display = 'none';
+        if (loginLink) loginLink.style.display = 'inline';
+        if (registerLink) registerLink.style.display = 'inline';
+      }
     });
   </script>
-
 
 </body>
 </html>
