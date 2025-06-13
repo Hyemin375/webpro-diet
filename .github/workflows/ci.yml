@@ -16,6 +16,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
+      - name: Install dependencies
+        run: cd backend && npm install
 
-      - run: npm install
-      - run: npm test
+      - name: Run tests
+        run: cd backend && npm test
