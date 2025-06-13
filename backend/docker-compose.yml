@@ -13,5 +13,19 @@ services:
       - db_data:/var/lib/mysql
     restart: always
 
+  backend:
+    build: .
+    container_name: nutrimate-backend
+    ports:
+      - "4000:4000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+    command: npm run dev
+    volumes:
+      - .:/app
+    working_dir: /app
+
 volumes:
   db_data:

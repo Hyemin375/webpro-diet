@@ -24,6 +24,14 @@ jobs:
           --health-timeout=5s
           --health-retries=3
 
+    env: 
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: 12345678
+      DB_NAME: nutrimate
+      JWT_SECRET: dummysecret123
+
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js
@@ -37,11 +45,4 @@ jobs:
 
       - name: Run tests
         working-directory: ./backend
-        env:
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          DB_USER: root
-          DB_PASSWORD: 12345678
-          DB_NAME: nutrimate
-          JWT_SECRET: dummysecret123
         run: npm test
