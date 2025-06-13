@@ -4,7 +4,7 @@ const { generateToken } = require('../utils/token');
 
 exports.register = async (req, res) => {
   try {
-    const { userLoginId,userPw, userName, userSex, userAge, userWeight, userHeight } = req.body;
+    const { userLoginId, userPw, userName, userSex, userAge, userWeight, userHeight } = req.body;
 
     const hashedPw = await bcrypt.hash(userPw, 10);
     const user = await User.create({

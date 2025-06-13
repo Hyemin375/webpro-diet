@@ -13,7 +13,6 @@ const swaggerSpec = require('./docs/swagger');
 // Swagger API 문서 경로 연결
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-
 // 회원가입, 로그인
 const authRoutes = require('./routes/auth');
 app.use('/api/v1/auth', authRoutes);
@@ -25,7 +24,7 @@ app.use('/api/v1/goal', goalRoutes);
 // 테스트용 라우트
 app.get('/', (req, res) => res.send('NutriMate API running'));
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 4000;
 
 sequelize.sync({ alter: true })
   .then(() => {
