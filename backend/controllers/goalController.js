@@ -1,5 +1,7 @@
 const { Goal } = require('../models');
 const jwt = require('jsonwebtoken');
+const { Op } = require('sequelize');
+const dayjs = require('dayjs');
 
 exports.setGoal = async (req, res) => {
   try {
@@ -162,3 +164,52 @@ exports.deleteGoal = async (req, res) => {
     res.status(500).json({ error: '서버 오류 발생' });
   }
 };
+
+exports.getProgress = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const goal = await Goal.findOne({ where: { userId } });
+    if (!goal) return res.status(404).json({ message: '목표 없음' });
+
+    const today = dayjs().format('YYYY-MM-DD');
+    const sevenDaysAgo = dayjs().subtract(6, 'day').format('YYYY-MM-DD');
+    const thirtyDaysAgo = dayjs().subtract(29, 'day').format('YYYY-MM-DD');
+
+    const todayTracking = await Tracking.findOne({ where: { userId, date: today } });
+    const todayCalories = todayTracking ? todayTracking.caloriesConsumed : 0;
+    const todayPercent = (todayCalories / goal.goalCalories) * 100;
+
+    const last7 = await Tracking.findAll({
+      where: { userId, date: { [Op.between]: [sevenDaysAgo, today] } }
+    });
+    const last30 = await Tracking.findAll({
+      where: { userId, date: { [Op.between]: [thirtyDaysAgo, today] } }
+    });
+
+    const avg7 = calcAvg(last7, goal.goalCalories);
+    const avg30 = calcAvg(last30, goal.goalCalories);
+
+    res.status(200).json({
+      date: today,
+      today: {
+        caloriesConsumed: todayCalories,
+        caloriesGoal: goal.goalCalories,
+        achievedPercent: parseFloat(todayPercent.toFixed(1))
+      },
+      summary: {
+        last7days: { averageAchievedPercent: avg7 },
+        last30days: { averageAchievedPercent: avg30 }
+      }
+    });
+
+  } catch (err) {
+    res.status(500).json({ message: '서버 에러', error: err.message });
+  }
+};
+
+function calcAvg(trackings, goalCalories) {
+  if (!trackings.length) return 0.0;
+  const sum = trackings.reduce((acc, t) => acc + (t.caloriesConsumed / goalCalories) * 100, 0);
+  return parseFloat((sum / trackings.length).toFixed(1));
+}

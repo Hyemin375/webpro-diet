@@ -7,6 +7,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./docs/swagger');
+
+// Swagger API 문서 경로 연결
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 
 // 회원가입, 로그인
 const authRoutes = require('./routes/auth');
@@ -31,3 +37,5 @@ sequelize.sync({ alter: true })
   .catch((err) => {
     console.error('❌ Sequelize sync failed:', err);
   });
+
+  

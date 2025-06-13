@@ -15,4 +15,8 @@ router.put('/', authenticate, goalController.updateGoal);
 // 목표 삭제 라우터
 router.delete('/', authenticate, goalController.deleteGoal);
 
+// 목표 달성도 조회 라우터
+router.get('/progress', authenticate, goalController.getProgress);
+
+
 module.exports = router;
