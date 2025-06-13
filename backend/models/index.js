@@ -7,7 +7,7 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 // 모델 불러오기
-db.User = require('./User')(sequelize, Sequelize.DataTypes);
+db.User = require('./user')(sequelize, Sequelize.DataTypes);
 db.Goal = require('./goal')(sequelize, Sequelize.DataTypes);
 db.Tracking = require('./tracking')(sequelize, Sequelize.DataTypes);           // 추가 ✅
 db.TrackingDetails = require('./trackingDetails')(sequelize, Sequelize.DataTypes); // 추가 ✅
