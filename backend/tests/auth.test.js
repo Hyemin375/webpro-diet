@@ -106,6 +106,6 @@ describe('Auth API', () => {
     const res = await request(app)
       .delete('/api/v1/auth/delete');
     expect(res.statusCode).toBe(401);
-    expect(res.body.message).toBe('인증 토큰이 필요합니다.');
+    expect(res.body.message).toBe('Authorization token is required.');
   });
 });

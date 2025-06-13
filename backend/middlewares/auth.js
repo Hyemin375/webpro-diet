@@ -5,8 +5,8 @@ module.exports = (req, res, next) => {
   console.log('[auth] Authorization Header:', authHeader);
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    console.log('[auth] ❌ 인증 토큰 없음 또는 형식 오류');
-    return res.status(401).json({ message: '인증 토큰이 필요합니다.' });
+    console.log('[auth] ❌  Missing or malformed authorization token');
+    return res.status(401).json({ message: 'Authorization token is required.' });
   }
 
   const token = authHeader.split(' ')[1];
@@ -19,6 +19,6 @@ module.exports = (req, res, next) => {
     next();
   } catch (err) {
     console.log('[auth] ❌ Token verification failed:', err.message);
-    return res.status(401).json({ message: '유효하지 않은 토큰입니다.' });
+    return res.status(401).json({ message: 'Invalid or expired token.' });
   }
 };
