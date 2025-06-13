@@ -16,11 +16,21 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          
+
       - name: Install dependencies
         working-directory: ./backend
         run: npm install
 
       - name: Run tests
         working-directory: ./backend
+        run: npm test
+
+      - name: Run tests
+        working-directory: ./backend
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_USER: root
+          DB_PASSWORD: root
+          DB_NAME: testdb
         run: npm test
