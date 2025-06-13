@@ -43,4 +43,5 @@ jobs:
           DB_USER: root
           DB_PASSWORD: 12345678
           DB_NAME: nutrimate
+          JWT_SECRET: dummysecret123
         run: npm test
