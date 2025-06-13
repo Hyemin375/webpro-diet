@@ -45,7 +45,6 @@ jobs:
           DB_HOST: 127.0.0.1
           DB_PORT: 3306
           DB_USER: root
-          DB_PASSWORD: root
-          DB_NAME: testdb
-          JWT_SECRET: dummy_jwt_for_ci
+          DB_PASSWORD: 12345678
+          DB_NAME: nutrimate
         run: npm test
