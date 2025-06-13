@@ -14,10 +14,19 @@ exports.register = async (req, res) => {
       userHeight 
     } = req.body;
 
-    // 중요 필드 누락 점검
-    if (!userLoginId || !userPw || !userName) {
-      return res.status(400).json({ message: 'Required fields are missing.' });
+    // 필수 필드 누락 점검
+    if (
+      !userLoginId || 
+      !userPw || 
+      !userName || 
+      !userSex || 
+      userAge == null || 
+      userWeight == null || 
+      userHeight == null
+    ) {
+      return res.status(400).json({ message: 'All fields are required.' });
     }
+
 
     // 중복 아이디 확인
     const existingUser = await User.findOne({ where: { userLoginId } });
@@ -52,6 +61,11 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { userLoginId, userPw } = req.body;
+
+    // 필수값 존재 여부 확인
+    if (!userLoginId || !userPw) {
+      return res.status(400).json({ message: 'Login ID and password are required.' });
+    }
 
     const user = await User.findOne({ where: { userLoginId } });
     if (!user) return res.status(401).json({ message: 'Invalid credentials' });

@@ -110,6 +110,75 @@ const authController = require('../controllers/authController');
  *                   example: User login ID already exists.
  */
 router.post('/register', authController.register);
+
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: User login
+ *     tags: [Auth]
+ *     description: Authenticates a user and returns a JWT access token.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userLoginId
+ *               - userPw
+ *             properties:
+ *               userLoginId:
+ *                 type: string
+ *                 example: orieasy1
+ *               userPw:
+ *                 type: string
+ *                 example: jiwon1234
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Login successful
+ *                 accessToken:
+ *                   type: string
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *       400:
+ *         description: Missing credentials
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Login ID and password are required.
+ *       401:
+ *         description: Invalid credentials
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Invalid credentials
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Login failed
+ */
 router.post('/login', authController.login);
 router.delete('/delete', authenticate, authController.deleteAccount);
 router.put('/update', authenticate, authController.updateAccount);
