@@ -10,6 +10,20 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: testdb
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js
@@ -33,4 +47,5 @@ jobs:
           DB_USER: root
           DB_PASSWORD: root
           DB_NAME: testdb
+          JWT_SECRET: dummy_jwt_for_ci
         run: npm test
