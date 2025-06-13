@@ -4,9 +4,31 @@ const { generateToken } = require('../utils/token');
 
 exports.register = async (req, res) => {
   try {
-    const { userLoginId, userPw, userName, userSex, userAge, userWeight, userHeight } = req.body;
+    const { 
+      userLoginId, 
+      userPw, 
+      userName, 
+      userSex, 
+      userAge, 
+      userWeight, 
+      userHeight 
+    } = req.body;
 
+    // 중요 필드 누락 점검
+    if (!userLoginId || !userPw || !userName) {
+      return res.status(400).json({ message: 'Required fields are missing.' });
+    }
+
+    // 중복 아이디 확인
+    const existingUser = await User.findOne({ where: { userLoginId } });
+    if (existingUser) {
+      return res.status(409).json({ message: 'User login ID already exists.' });
+    }
+
+    // password
     const hashedPw = await bcrypt.hash(userPw, 10);
+    
+    // 유저 생성
     const user = await User.create({
       userLoginId,
       userPw: hashedPw,
@@ -17,7 +39,10 @@ exports.register = async (req, res) => {
       userHeight
     });
 
-    res.status(201).json({ message: 'User registered successfully', user });
+    // 응답 시 비밀번호 제외
+    const { userPw: _, ...userSafe } = user.toJSON();
+
+    res.status(201).json({ message: 'User registered successfully', user: userSafe });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Registration failed' });

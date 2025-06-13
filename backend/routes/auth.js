@@ -7,8 +7,9 @@ const authController = require('../controllers/authController');
  * @swagger
  * /auth/register:
  *   post:
- *     summary: 사용자 회원가입
+ *     summary: Register a new user
  *     tags: [Auth]
+ *     description: Creates a new user account with the provided information.
  *     requestBody:
  *       required: true
  *       content:
@@ -26,29 +27,29 @@ const authController = require('../controllers/authController');
  *             properties:
  *               userLoginId:
  *                 type: string
- *                 example: kate123
+ *                 example: orieasy1
  *               userPw:
  *                 type: string
- *                 example: need1234
+ *                 example: jiwon1234
  *               userName:
  *                 type: string
- *                 example: Kate
+ *                 example: jiwon
  *               userSex:
  *                 type: string
  *                 enum: [male, female]
  *                 example: female
  *               userAge:
  *                 type: integer
- *                 example: 28
+ *                 example: 23
  *               userWeight:
  *                 type: number
  *                 example: 60
  *               userHeight:
  *                 type: number
- *                 example: 165
+ *                 example: 172
  *     responses:
  *       201:
- *         description: 회원가입 성공
+ *         description: User registered successfully
  *         content:
  *           application/json:
  *             schema:
@@ -62,15 +63,51 @@ const authController = require('../controllers/authController');
  *                   properties:
  *                     userId:
  *                       type: integer
- *                       example: 1
+ *                       example: 6
  *                     userLoginId:
  *                       type: string
- *                       example: kate123
+ *                       example: orieasy1
  *                     userName:
  *                       type: string
- *                       example: Kate
- *       500:
- *         description: 서버 에러 (회원가입 실패)
+ *                       example: jiwon
+ *                     userSex:
+ *                       type: string
+ *                       example: female
+ *                     userAge:
+ *                       type: integer
+ *                       example: 23
+ *                     userWeight:
+ *                       type: number
+ *                       example: 60
+ *                     userHeight:
+ *                       type: number
+ *                       example: 172
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                     modifiedAt:
+ *                       type: string
+ *                       format: date-time
+ *       400:
+ *         description: Required fields are missing
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Required fields are missing.
+ *       409:
+ *         description: Duplicate user login ID
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User login ID already exists.
  */
 router.post('/register', authController.register);
 router.post('/login', authController.login);
