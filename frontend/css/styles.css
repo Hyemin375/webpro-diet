@@ -263,3 +263,26 @@ footer {
   font-weight: bold;
   cursor: pointer;
 }
+
+.required {
+  color: red;
+  font-weight: bold;
+  margin-left: 4px;
+}
+
+.optional {
+  color: #888;
+  font-style: italic;
+  font-size: 0.9em;
+  margin-left: 4px;
+}
+
+#reset-defaults {
+  margin-top: 1em;
+  width: 100%;
+  padding: 0.5em;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  font-weight: bold;
+  cursor: pointer;
+}

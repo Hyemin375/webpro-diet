@@ -59,20 +59,29 @@
         <span class="close-popup" id="close-settings">&times;</span>
         <h3>Set Your Goals</h3>
 
-        <label for="height">Height (cm):</label>
-        <input type="number" id="height" placeholder="Enter height" />
-
-        <label for="weight">Weight (kg):</label>
-        <input type="number" id="weight" placeholder="Enter weight" />
-
         <label for="targetCalories">Target Calories (kcal):</label>
-        <input type="number" id="targetCalories" placeholder="Enter calorie target" />
+        <input type="number" id="targetCalories" placeholder="Enter calorie target" required />
 
         <label for="targetProtein">Target Protein (g):</label>
-        <input type="number" id="targetProtein" placeholder="Enter protein target" />
+        <input type="number" id="targetProtein" placeholder="Enter protein target" required />
 
-        <button id="saveGoals">Save</button>
-        <button id="closePopup">Cancel</button>
+        <label for="targetFat">Target Fat (g):</label>
+        <input type="number" id="targetFat" placeholder="Optional fat target" />
+
+        <label for="targetCarbohydrate">Target Carbohydrate (g):</label>
+        <input type="number" id="targetCarbohydrate" placeholder="Optional carb target" />
+
+        <label for="targetSugar">Target Sugar (g):</label>
+        <input type="number" id="targetSugar" placeholder="Optional sugar target" />
+
+        <label for="targetCholesterol">Target Cholesterol (mg):</label>
+        <input type="number" id="targetCholesterol" placeholder="Optional cholesterol target" />
+
+        <div class="popup-buttons">
+          <button id="saveGoals">Save</button>
+          <button id="closePopup">Cancel</button>
+          <button id="reset-defaults">Reset</button>
+        </div>
       </div>
     </div>
 
@@ -94,5 +103,6 @@
   </footer>
 
   <script src="../script/script.js" defer></script>
+  <script src="../script/goal.js"></script>
 </body>
 </html>

@@ -1,8 +1,5 @@
 let currentDate = new Date();
 
-console.log("✅ script.js 실행됨");
-
-
 function updateCalendarDisplay() {
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -100,28 +97,6 @@ function applyProgressColor(progress) {
   }
 }
 
-function setupPopup() {
-  const openBtn = document.getElementById('open-settings'); // 수정됨
-  const closeBtn = document.getElementById('close-settings'); // 수정됨
-  const popup = document.getElementById('settings-popup'); // 수정됨
-
-  if (openBtn && closeBtn && popup) {
-    openBtn.addEventListener('click', () => {
-      popup.classList.remove('hidden');
-    });
-
-    closeBtn.addEventListener('click', () => {
-      popup.classList.add('hidden');
-    });
-
-    window.addEventListener('click', (event) => {
-      if (event.target === popup) {
-        popup.classList.add('hidden');
-      }
-    });
-  }
-}
-
 
 document.addEventListener('DOMContentLoaded', () => {
   
@@ -143,12 +118,8 @@ document.addEventListener('DOMContentLoaded', () => {
     applyProgressColor(progress);
   });
 
-  // 팝업 설정
-  setupPopup();
-
     // 로그인 상태 기반 버튼 토글
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-  console.log("📌 로그인 상태:", isLoggedIn);
 
   const loginLink = document.getElementById("login-link");
   const registerLink = document.getElementById("register-link");
@@ -159,12 +130,10 @@ document.addEventListener('DOMContentLoaded', () => {
     loginLink.style.display = "none";
     registerLink.style.display = "none";
     logoutLink.style.display = "inline";
-    deleteAccountLink.style.display = "inline";
   } else {
     loginLink.style.display = "inline";
     registerLink.style.display = "inline";
     logoutLink.style.display = "none";
-    deleteAccountLink.style.display = "none";
   }
 
   // 로그아웃 동작
@@ -175,28 +144,4 @@ document.addEventListener('DOMContentLoaded', () => {
     window.location.href = "login.html";
   });
 
-  // 회원탈퇴 동작
-  deleteAccountLink.addEventListener("click", (e) => {
-    e.preventDefault();
-    if (confirm("정말로 계정을 삭제하시겠습니까?")) {
-      localStorage.setItem("isLoggedIn", "false");
-      alert("계정이 삭제되었습니다.");
-      location.reload();
-    }
-  });
-
-});
-
-document.getElementById('saveGoals').addEventListener('click', () => {
-  const height = document.getElementById('height').value;
-  const weight = document.getElementById('weight').value;
-  const calories = document.getElementById('targetCalories').value;
-  const protein = document.getElementById('targetProtein').value;
-
-  // 예시로 콘솔 출력
-  console.log(`Height: ${height}, Weight: ${weight}`);
-  console.log(`Target Calories: ${calories}, Target Protein: ${protein}`);
-
-  // 팝업 닫기
-  document.getElementById('goal-popup').classList.add('hidden');
 });

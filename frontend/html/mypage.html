@@ -54,45 +54,8 @@
     </div>
   </div>
 
-  
-
   <script src="../script/mypage.js"></script>
   <script src="../script/delete.js"></script>
-
-  <script>
-    // 로그아웃 기능
-    document.getElementById('logout').addEventListener('click', function () {
-      localStorage.clear();
-      window.location.href = 'login.html';
-    });
-
-    // 회원 탈퇴
-    document.getElementById('delete-account').addEventListener('click', function (e) {
-      e.preventDefault();
-      deleteAccount();
-    });
-
-    // 로그인 상태 체크 및 버튼 표시
-    window.addEventListener('DOMContentLoaded', () => {
-      const token = localStorage.getItem('token');
-      const deleteBtn = document.getElementById('delete-account');
-      const logoutBtn = document.getElementById('logout');
-      const loginLink = document.getElementById('login-link');
-      const registerLink = document.getElementById('register-link');
-
-      if (token) {
-        if (deleteBtn) deleteBtn.style.display = 'inline';
-        if (logoutBtn) logoutBtn.style.display = 'inline';
-        if (loginLink) loginLink.style.display = 'none';
-        if (registerLink) registerLink.style.display = 'none';
-      } else {
-        if (deleteBtn) deleteBtn.style.display = 'none';
-        if (logoutBtn) logoutBtn.style.display = 'none';
-        if (loginLink) loginLink.style.display = 'inline';
-        if (registerLink) registerLink.style.display = 'inline';
-      }
-    });
-  </script>
 
 </body>
 </html>
