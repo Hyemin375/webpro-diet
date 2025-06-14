@@ -4,6 +4,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BIGINT,
       allowNull: false,
       primaryKey: true, // 유저당 하나만 가질 수 있음
+      references: {
+        model: 'Users',
+        key: 'userId',
+      },
+      onDelete: 'CASCADE',
     },
     goalCalories: {
       type: DataTypes.INTEGER,
