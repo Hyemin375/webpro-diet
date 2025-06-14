@@ -5,7 +5,8 @@ const dayjs = require('dayjs');
 
 exports.setGoal = async (req, res) => {
   try {
-    const userId = req.user.id; // JWT에서 추출된 사용자 ID
+    const userId = req.user.useruserId;
+ // JWT에서 추출된 사용자 ID
 
     const {
       calories,
@@ -58,7 +59,7 @@ exports.setGoal = async (req, res) => {
 };
 
 exports.getGoal = async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.user.userId;
 
   try {
     const goal = await Goal.findOne({ where: { userId } });
@@ -93,7 +94,7 @@ exports.getGoal = async (req, res) => {
 };
 
 exports.updateGoal = async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.user.userId;
 
   const { calories, protein, fat, carbohydrate, sugar, cholesterol } = req.body;
 
@@ -147,7 +148,7 @@ exports.updateGoal = async (req, res) => {
 };
 
 exports.deleteGoal = async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.user.userId;
 
   try {
     const goal = await Goal.findOne({ where: { userId } });
@@ -167,7 +168,8 @@ exports.deleteGoal = async (req, res) => {
 
 exports.getProgress = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user.userId;
+
 
     const goal = await Goal.findOne({ where: { userId } });
     if (!goal) return res.status(404).json({ message: '목표 없음' });
