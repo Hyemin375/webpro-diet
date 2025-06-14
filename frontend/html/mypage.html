@@ -20,7 +20,6 @@
       <a href="login.html" id="login-link">Login</a>
       <a href="register.html" id="register-link">Register</a>
       <!-- 로그아웃/회원탈퇴 -->
-      <a href="#" id="delete-account">Delete Account</a>
       <a href="#" id="logout">Logout</a>
     </div>
   </nav>
@@ -28,27 +27,34 @@
 
 
   <div class="mypage-container">
-    <h2>회원 정보 수정</h2>
+    <h2>Update Personal Information</h2>
     <form id="infoForm">
-      <input type="text" id="userName" placeholder="이름" required />
+      <input type="text" id="userName" placeholder="Name" required />
       <select id="userSex" required>
-        <option value="">성별 선택</option>
-        <option value="male">남성</option>
-        <option value="female">여성</option>
+        <option value="">Gender</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
       </select>
-      <input type="number" id="userAge" placeholder="나이" required />
-      <input type="number" id="userWeight" placeholder="몸무게(kg)" required />
-      <input type="number" id="userHeight" placeholder="키(cm)" required />
-      <button type="submit">정보 수정</button>
+      <input type="number" id="userAge" placeholder="Age" required />
+      <input type="number" id="userWeight" placeholder="Weight(kg)" required />
+      <input type="number" id="userHeight" placeholder="Height(cm)" required />
+      <button type="submit">Save</button>
     </form>
 
-    <h2>비밀번호 변경</h2>
+    <h2>Change Password</h2>
     <form id="passwordForm">
-      <input type="password" id="currentPassword" placeholder="현재 비밀번호" required />
-      <input type="password" id="newPassword" placeholder="새 비밀번호" required />
-      <button type="submit">비밀번호 변경</button>
+      <input type="password" id="currentPassword" placeholder="Current Password" required />
+      <input type="password" id="newPassword" placeholder="New Password" required />
+      <button type="submit">Save</button>
     </form>
+
+    <div class="delete-section">
+      
+      <a href="#" id="delete-account">Delete Account</a>
+    </div>
   </div>
+
+  
 
   <script src="../script/mypage.js"></script>
   <script src="../script/delete.js"></script>
