@@ -1,5 +1,8 @@
 let currentDate = new Date();
 
+console.log("✅ script.js 실행됨");
+
+
 function updateCalendarDisplay() {
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -121,6 +124,7 @@ function setupPopup() {
 
 
 document.addEventListener('DOMContentLoaded', () => {
+  
   document.getElementById('prev-month').addEventListener('click', () => {
     currentDate.setMonth(currentDate.getMonth() - 1);
     updateCalendarDisplay();
@@ -141,6 +145,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 팝업 설정
   setupPopup();
+
+    // 로그인 상태 기반 버튼 토글
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  console.log("📌 로그인 상태:", isLoggedIn);
+
+  const loginLink = document.getElementById("login-link");
+  const registerLink = document.getElementById("register-link");
+  const logoutLink = document.getElementById("logout");
+  const deleteAccountLink = document.getElementById("delete-account");
+
+  if (isLoggedIn) {
+    loginLink.style.display = "none";
+    registerLink.style.display = "none";
+    logoutLink.style.display = "inline";
+    deleteAccountLink.style.display = "inline";
+  } else {
+    loginLink.style.display = "inline";
+    registerLink.style.display = "inline";
+    logoutLink.style.display = "none";
+    deleteAccountLink.style.display = "none";
+  }
+
+  // 로그아웃 동작
+  logoutLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    localStorage.setItem("isLoggedIn", "false");
+    alert("You have been logged out.");
+    window.location.href = "login.html";
+  });
+
+  // 회원탈퇴 동작
+  deleteAccountLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (confirm("정말로 계정을 삭제하시겠습니까?")) {
+      localStorage.setItem("isLoggedIn", "false");
+      alert("계정이 삭제되었습니다.");
+      location.reload();
+    }
+  });
+
 });
 
 document.getElementById('saveGoals').addEventListener('click', () => {

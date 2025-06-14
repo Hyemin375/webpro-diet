@@ -23,10 +23,12 @@ document.getElementById('loginForm').addEventListener('submit', async function (
       if (data.user) {
         localStorage.setItem('user', JSON.stringify(data.user));
       }
+      localStorage.setItem("isLoggedIn", "true");
+
 
       console.log("Token:", data.accessToken);
       alert("로그인 성공!");
-      window.location.href = "menu.html";
+      window.location.href = "index.html";
     } else {
       alert("로그인 실패: " + data.message);
     }
