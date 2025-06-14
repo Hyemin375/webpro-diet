@@ -10,7 +10,7 @@ router.use(authenticate);
 /**
  * @swagger
  * /api/v1/mypage/profile:
- *   post:
+ *   get:
  *     summary: Get user profile
  *     description: Returns the authenticated user's profile information.
  *     tags: [Mypage]
