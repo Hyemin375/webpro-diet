@@ -11,6 +11,7 @@ const API_PREFIX = '/api/v1/mypage';
 beforeAll(async () => {
   await sequelize.authenticate();
   await sequelize.sync({ force: true });
+  
   testId = `testuser_${Date.now()}`;
 
   const registerRes = await request(app)

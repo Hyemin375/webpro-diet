@@ -13,8 +13,8 @@ module.exports = (req, res, next) => {
   console.log('[auth] Extracted token:', token);
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log('[auth] ✅ Token verified:', decoded);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET, { algorithms: ['HS256'] });
+    console.log('[auth] ✅ Extracted token (truncated):', token.slice(0, 10) + '...');
     req.user = { userId: decoded.id }; // or decoded.id depending on token structure
     next();
   } catch (err) {
