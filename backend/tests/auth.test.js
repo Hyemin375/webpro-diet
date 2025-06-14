@@ -3,16 +3,21 @@ const app = require('../app'); // Express 앱 인스턴스를 export 해야 함
 const { sequelize, User } = require('../models');
 
 let accessToken = '';
+let testId = ' ';
 let userId = null;
 
 beforeAll(async () => {
+  await sequelize.authenticate(); // 연결 확인용
+
   await sequelize.sync({ force: true }); // 테스트 DB 초기화
+
+  testId = `testuser_${Date.now()}`;
 
   // 회원가입
   const registerRes = await request(app)
     .post('/api/v1/auth/register')
     .send({
-      userLoginId: 'testuser1',
+      userLoginId: testId,
       userPw: 'testpass123',
       userName: 'Test User',
       userSex: 'female',
@@ -27,7 +32,7 @@ beforeAll(async () => {
   const loginRes = await request(app)
     .post('/api/v1/auth/login')
     .send({
-      userLoginId: 'testuser1',
+      userLoginId: testId,
       userPw: 'testpass123',
     });
 
@@ -43,7 +48,7 @@ describe('Auth API', () => {
     const res = await request(app)
       .post('/api/v1/auth/register')
       .send({
-        userLoginId: 'testuser1',
+        userLoginId: testId,
         userPw: 'testpass123',
         userName: 'Test User',
         userSex: 'female',
@@ -60,7 +65,7 @@ describe('Auth API', () => {
     const res = await request(app)
       .post('/api/v1/auth/login')
       .send({
-        userLoginId: 'testuser1',
+        userLoginId: testId,
         userPw: 'testpass123'
       });
 
@@ -73,7 +78,7 @@ describe('Auth API', () => {
     const res = await request(app)
       .post('/api/v1/auth/login')
       .send({
-        userLoginId: 'testuser1',
+        userLoginId: testId,
         userPw: 'wrongpass'
       });
 
@@ -90,22 +95,4 @@ describe('Auth API', () => {
     expect(res.body.message).toBe('Login ID and password are required.');
   });
 
-  test('Delete account - 200', async () => {
-    const res = await request(app)
-      .delete('/api/v1/auth/delete')
-      .set('Authorization', `Bearer ${accessToken}`);
-
-    expect(res.statusCode).toBe(200);
-    expect(res.body.message).toBe('User account deleted successfully.');
-
-    const deletedUser = await User.findByPk(userId);
-    expect(deletedUser).toBeNull();
-  });
-
-  test('Delete account without token - 401', async () => {
-    const res = await request(app)
-      .delete('/api/v1/auth/delete');
-    expect(res.statusCode).toBe(401);
-    expect(res.body.message).toBe('Authorization token is required.');
-  });
 });

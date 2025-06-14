@@ -21,6 +21,11 @@ app.use('/api/v1/auth', authRoutes);
 const goalRoutes = require('./routes/goal');
 app.use('/api/v1/goal', goalRoutes);
 
+// mypage router
+const mypageRoutes = require('./routes/mypage');
+app.use('/api/v1/mypage', mypageRoutes);
+
+
 // 기본 라우트
 app.get('/', (req, res) => res.send('NutriMate API running'));
 
