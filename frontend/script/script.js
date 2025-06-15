@@ -1,14 +1,22 @@
 window.addEventListener("DOMContentLoaded", () => {
-  const todayVal = parseInt(document.getElementById("today-val").textContent);
-  const targetVal = parseInt(document.getElementById("target-val").textContent);
-  const avatarImg = document.getElementById("avatar-img");
+  const avatar = document.getElementById("avatar-img");
+  const firstCurrVal = document.querySelector(".curr-val");
+  const firstMaxVal = document.querySelector(".max-val");
 
-  if (todayVal < targetVal) {
-    avatarImg.src = "sad.webp";
-  } else {
-    avatarImg.src = "happy.svg";
-  }
+  if (!avatar || !firstCurrVal || !firstMaxVal) return;
+
+  const today = parseFloat(firstCurrVal.textContent.trim());
+  const target = parseFloat(firstMaxVal.textContent.trim());
+
+  if (isNaN(today) || isNaN(target) || target === 0) return;
+
+  const percent = (today / target) * 100;
+
+  avatar.src = Math.round(percent) >= 100 ? "happy.svg" : "sad.webp";
 });
+
+
+
 
 
 let currentDate = new Date();
@@ -158,3 +166,30 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 });
+
+function applyIndividualProgressColors() {
+  const progressBars = document.querySelectorAll('.progress-bar');
+
+  progressBars.forEach((bar) => {
+    const container = bar.previousElementSibling; // 바로 위에 <p> 요소
+
+    const currSpan = container.querySelector('.curr-val');
+    const maxSpan = container.querySelector('.max-val');
+
+    if (!currSpan || !maxSpan) return;
+
+    const curr = parseFloat(currSpan.textContent);
+    const max = parseFloat(maxSpan.textContent);
+    const percent = (curr / max) * 100;
+
+    let color;
+    if (percent <= 40) color = 'red';
+    else if (percent < 100) color = 'orange';
+    else if (percent == 100) color = 'green';
+    else color = 'green';
+
+    bar.style.setProperty('--bar-color', color);
+  });
+}
+applyIndividualProgressColors();
+
