@@ -1,3 +1,16 @@
+window.addEventListener("DOMContentLoaded", () => {
+  const todayVal = parseInt(document.getElementById("today-val").textContent);
+  const targetVal = parseInt(document.getElementById("target-val").textContent);
+  const avatarImg = document.getElementById("avatar-img");
+
+  if (todayVal < targetVal) {
+    avatarImg.src = "sad.webp";
+  } else {
+    avatarImg.src = "happy.svg";
+  }
+});
+
+
 let currentDate = new Date();
 
 function updateCalendarDisplay() {
@@ -141,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     localStorage.setItem("isLoggedIn", "false");
     alert("You have been logged out.");
-    window.location.href = "login.html";
+    window.location.href = "landing.html";
   });
 
 });

@@ -99,38 +99,8 @@
   <script src="../script/slider.js"></script>
   <script src="../script/modal.js"></script>
 
-  <script>
-    // ✅ 로그아웃 버튼
-    document.getElementById('logout').addEventListener('click', function () {
-      localStorage.clear(); // 모든 정보 제거
-      window.location.href = 'login.html';
-    });
-  </script>
-  
-  <script>
-    window.addEventListener('DOMContentLoaded', () => {
-      const token = localStorage.getItem('token');
+  <script src="../script/menu.js"></script>
 
-      const deleteBtn = document.getElementById('delete-account');
-      const logoutBtn = document.getElementById('logout');
-      const loginLink = document.getElementById('login-link');
-      const registerLink = document.getElementById('register-link');
-
-      if (token) {
-        // 로그인 상태
-        if (deleteBtn) deleteBtn.style.display = 'inline';
-        if (logoutBtn) logoutBtn.style.display = 'inline';
-        if (loginLink) loginLink.style.display = 'none';
-        if (registerLink) registerLink.style.display = 'none';
-      } else {
-        // 비로그인 상태
-        if (deleteBtn) deleteBtn.style.display = 'none';
-        if (logoutBtn) logoutBtn.style.display = 'none';
-        if (loginLink) loginLink.style.display = 'inline';
-        if (registerLink) registerLink.style.display = 'inline';
-      }
-    });
-  </script>
 
 </body>
 </html>

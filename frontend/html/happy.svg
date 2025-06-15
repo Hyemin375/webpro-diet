@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Designed by Vexels.com - 2016 All Rights Reserved - https://vexels.com/terms-and-conditions/  -->
+
+<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="1200px" height="1200px" viewBox="0 0 1200 1200" enable-background="new 0 0 1200 1200" xml:space="preserve">
+<g id="Capa_2">
+</g>
+<g>
+	<g id="Capa_1_1_">
+		<g>
+			<g>
+				
+					<radialGradient id="SVGID_1_" cx="430.3464" cy="858.7947" r="488.2577" gradientTransform="matrix(-4.371139e-008 1 1.5231 6.657638e-008 -722.2155 -111.4595)" gradientUnits="userSpaceOnUse">
+					<stop  offset="0.283" style="stop-color:#F7E69D"/>
+					<stop  offset="0.3041" style="stop-color:#F6E293"/>
+					<stop  offset="0.3875" style="stop-color:#F0D372"/>
+					<stop  offset="0.4773" style="stop-color:#ECC757"/>
+					<stop  offset="0.5742" style="stop-color:#E9BE41"/>
+					<stop  offset="0.6816" style="stop-color:#E7B733"/>
+					<stop  offset="0.808" style="stop-color:#E5B32A"/>
+					<stop  offset="1" style="stop-color:#E5B227"/>
+				</radialGradient>
+				<circle fill="url(#SVGID_1_)" cx="600" cy="600" r="550"/>
+				<path fill="#78491C" d="M274.399,670.403c12.69,3.633,321.212,88.005,611.604,4.404c39.605-8.801,88.004-30.806,52.803,70.396
+					c-35.194,101.201-131.999,250.81-351.994,250.81c-220.003,0-308-158.385-343.202-281.599
+					C234.801,666.007,243.601,661.611,274.399,670.403z"/>
+				<path fill="#FFFFFF" d="M279.358,710.106c0,0-8.696,60.879,45.657,78.279c54.362,17.4,117.412,45.65,258.734,45.65
+					c141.321,0,250.028-23.918,289.16-41.311c39.132-17.399,45.658-80.441,45.658-80.441s-180.453,32.613-339.167,32.613
+					S279.358,710.106,279.358,710.106z"/>
+			</g>
+			<path fill="#78491C" d="M445.9,412.369c29.744,0,53.863,31.096,53.863,69.455c0,38.361-24.119,69.464-53.863,69.464
+				c-29.754,0-53.864-31.103-53.864-69.464C392.036,443.465,416.146,412.369,445.9,412.369z"/>
+			<path fill="#78491C" d="M745.565,412.369c29.744,0,53.863,31.096,53.863,69.455c0,38.361-24.119,69.464-53.863,69.464
+				c-29.753,0-53.864-31.103-53.864-69.464C691.701,443.465,715.812,412.369,745.565,412.369z"/>
+		</g>
+	</g>
+</g>
+</svg>
