@@ -1,35 +1,36 @@
-async function deleteAccount() {
-  const token = localStorage.getItem('token');
-  const userName = localStorage.getItem('userName');
+document.addEventListener('DOMContentLoaded', () => {
+  const deleteBtn = document.getElementById('delete-account');
 
-  if (!token) {
-    alert('로그인이 필요합니다.');
-    return;
-  }
+  deleteBtn?.addEventListener('click', async () => {
+    const confirmed = confirm('Are you sure you want to delete your account? This action cannot be undone.');
+    if (!confirmed) return;
 
-  const confirmDelete = confirm(`정말로 해당 계정을 삭제하시겠습니까?`);
-  if (!confirmDelete) return;
-
-  try {
-    const response = await fetch('http://localhost:4000/api/v1/auth/delete', {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      alert('계정이 성공적으로 삭제되었습니다.');
-      localStorage.removeItem('token');
-      localStorage.removeItem('userName');
-      window.location.href = 'index.html';
-    } else {
-      alert('계정 삭제 실패: ' + (data.message || data.error || '알 수 없는 오류'));
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('You need to log in first.');
+      window.location.href = 'login.html';
+      return;
     }
-  } catch (err) {
-    console.error('삭제 요청 중 오류:', err);
-    alert('서버 오류가 발생했습니다.');
-  }
-}
+
+    try {
+      const res = await fetch('http://localhost:4000/api/v1/mypage/delete', {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (res.ok) {
+        alert('Your account has been successfully deleted.');
+        localStorage.clear(); // Clear token and data
+        window.location.href = 'home.html'; // Redirect to homepage
+      } else {
+        const data = await res.json();
+        alert('❌ Account deletion failed: ' + (data.message || 'Unknown error occurred.'));
+      }
+    } catch (err) {
+      console.error('❌ Account deletion request error:', err);
+      alert('Failed to connect to the server.');
+    }
+  });
+});

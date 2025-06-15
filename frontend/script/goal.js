@@ -1,17 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
   const token = localStorage.getItem('token');
   if (!token) {
-    alert('로그인이 필요합니다.');
+    alert('Login is required.');
     window.location.href = 'login.html';
     return;
   }
 
   const openBtn = document.getElementById('open-settings');
-  const closeBtn = document.getElementById('close-settings');
   const saveBtn = document.getElementById('saveGoals');
   const popup = document.getElementById('settings-popup');
-  const closePopup = document.getElementById('closePopup');
-  const resetBtn = document.getElementById('reset-defaults');
+  const closePopup = document.getElementById('close-settings');
+  const reloadBtn = document.getElementById('reload');
+  const recoBtn = document.getElementById('reset');
 
   const inputCalories = document.getElementById('targetCalories');
   const inputProtein = document.getElementById('targetProtein');
@@ -20,11 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const inputSugar = document.getElementById('targetSugar');
   const inputChol = document.getElementById('targetCholesterol');
 
-  openBtn?.addEventListener('click', () => popup.classList.remove('hidden'));
-  closeBtn?.addEventListener('click', () => popup.classList.add('hidden'));
-  closePopup?.addEventListener('click', () => popup.classList.add('hidden'));
-
-  // 🔸 UI 갱신 함수
   function updateGoalUI(goal, bmi = null) {
     const cal = goal.calories || 0;
     const pro = goal.protein || 0;
@@ -38,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const proteinText = document.querySelectorAll('.goal-status strong')[1];
-    if (proteinText) proteinText.textContent = `85 / ${pro} g`; // 실제 섭취량은 추후 대체 가능
+    if (proteinText) proteinText.textContent = `85 / ${pro} g`;
 
     const progressBars = document.querySelectorAll('.goal-status .progress-bar');
     if (progressBars[0]) {
@@ -51,7 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // 🔹 사용자 정보 받아오기
   async function fetchUserInfo() {
     const response = await fetch("http://localhost:4000/api/v1/mypage/profile", {
       headers: { Authorization: `Bearer ${token}` }
@@ -59,6 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!response.ok) return null;
     const user = await response.json();
+    document.querySelector('.user-profile h3').textContent = `Welcome, ${user.userName}`;
+
     return {
       height: parseFloat(user.userHeight),
       weight: parseFloat(user.userWeight)
@@ -71,66 +67,77 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function getRecommendedGoals(bmi) {
-    if (bmi < 18.5) return { calories: 2200, protein: 90 };
-    if (bmi < 25) return { calories: 2000, protein: 75 };
-    if (bmi < 30) return { calories: 1800, protein: 65 };
-    return { calories: 1600, protein: 60 };
+    if (bmi < 18.5) {
+      return { calories: 2200, protein: 90, fat: 60, carbohydrate: 300, sugar: 30, cholesterol: 200 };
+    }
+    if (bmi < 25) {
+      return { calories: 2000, protein: 75, fat: 55, carbohydrate: 250, sugar: 25, cholesterol: 180 };
+    }
+    if (bmi < 30) {
+      return { calories: 1800, protein: 65, fat: 50, carbohydrate: 220, sugar: 20, cholesterol: 160 };
+    }
+    return { calories: 1600, protein: 60, fat: 45, carbohydrate: 200, sugar: 15, cholesterol: 150 };
   }
 
-  // 🔹 기존 목표 불러오기
-  (async () => {
+  async function loadGoal() {
+    const user = await fetchUserInfo();
+    const bmi = user ? calculateBMI(user.height, user.weight) : null;
+
     try {
       const res = await fetch('http://localhost:4000/api/v1/goal', {
         method: 'GET',
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` }
       });
 
       if (res.ok) {
         const { goal } = await res.json();
-
         inputCalories.value = goal.calories || '';
         inputProtein.value = goal.protein || '';
         inputFat.value = goal.fat || '';
         inputCarb.value = goal.carbohydrate || '';
         inputSugar.value = goal.sugar || '';
         inputChol.value = goal.cholesterol || '';
-
-        const user = await fetchUserInfo();
-        const bmi = user ? calculateBMI(user.height, user.weight) : null;
         updateGoalUI(goal, bmi);
-
-      } else if (res.status === 404) {
-        console.log('✅ 영양 목표 없음: 빈 input 유지');
       } else {
-        console.warn('❌ 목표 불러오기 실패:', res.status);
+        console.warn('❌ Failed to load goal:', res.status);
       }
     } catch (err) {
-      console.error('❌ 목표 불러오기 에러:', err);
+      console.error('❌ Error loading goal:', err);
     }
-  })();
+  }
 
-  // 🔹 목표 저장
+  loadGoal();
+
+  openBtn?.addEventListener('click', () => {
+    popup.classList.remove('hidden');
+    loadGoal(); // sync with latest when opening
+  });
+  closePopup?.addEventListener('click', () => popup.classList.add('hidden'));
+
   saveBtn?.addEventListener('click', async () => {
     const calories = parseInt(inputCalories.value);
     const protein = parseInt(inputProtein.value);
+    const fat = parseInt(inputFat.value);
+    const carbohydrate = parseInt(inputCarb.value);
+    const sugar = parseInt(inputSugar.value);
+    const cholesterol = parseInt(inputChol.value);
 
-    if (isNaN(calories) || isNaN(protein)) {
-      alert('칼로리와 단백질은 필수 항목입니다.');
+    if (
+      isNaN(calories) || isNaN(protein) || isNaN(fat) ||
+      isNaN(carbohydrate) || isNaN(sugar) || isNaN(cholesterol)
+    ) {
+      alert('⚠️ All fields are required. Please fill in every target value.');
       return;
     }
 
-    const payload = { calories, protein };
-    const optionalFields = {
-      fat: inputFat.value,
-      carbohydrate: inputCarb.value,
-      sugar: inputSugar.value,
-      cholesterol: inputChol.value
+    const payload = {
+      calories,
+      protein,
+      fat,
+      carbohydrate,
+      sugar,
+      cholesterol
     };
-
-    for (const [key, val] of Object.entries(optionalFields)) {
-      const num = parseInt(val);
-      if (!isNaN(num)) payload[key] = num;
-    }
 
     try {
       const res = await fetch('http://localhost:4000/api/v1/goal', {
@@ -143,35 +150,35 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       const result = await res.json();
-
       if (res.status === 201) {
-        alert('🎉 목표가 성공적으로 저장되었습니다!');
+        alert('🎉 Goal saved successfully!');
         popup.classList.add('hidden');
-
         const user = await fetchUserInfo();
         const bmi = user ? calculateBMI(user.height, user.weight) : null;
         updateGoalUI(result.goal, bmi);
-
       } else {
-        alert('❌ 저장 실패: ' + (result.message || '알 수 없는 오류'));
+        alert('❌ Failed to save: ' + (result.message || 'Unknown error'));
       }
     } catch (err) {
-      console.error('❌ 목표 저장 요청 실패:', err);
-      alert('서버 연결 오류');
+      console.error('❌ Failed to send goal request:', err);
+      alert('Server connection failed.');
     }
   });
 
-  // 🔹 초기화 버튼 (BMI 기반 기본값 저장)
-  resetBtn?.addEventListener("click", async () => {
+  reloadBtn?.addEventListener('click', () => {
+    loadGoal();
+    alert('✅ Restored to the currently saved goals.');
+  });
+
+  recoBtn?.addEventListener("click", async () => {
     const user = await fetchUserInfo();
     if (!user || !user.height || !user.weight) {
-      alert("신장과 체중 정보가 필요합니다.");
+      alert("Height and weight info is required.");
       return;
     }
 
     const bmi = calculateBMI(user.height, user.weight);
-    const { calories, protein } = getRecommendedGoals(bmi);
-    const payload = { calories, protein };
+    const recommended = getRecommendedGoals(bmi);
 
     try {
       const res = await fetch('http://localhost:4000/api/v1/goal', {
@@ -180,22 +187,20 @@ document.addEventListener('DOMContentLoaded', () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(recommended)
       });
 
       const result = await res.json();
-
       if (res.status === 201 || res.status === 200) {
         popup.classList.add('hidden');
-        alert('✅ BMI 기반 기본 목표로 초기화되었습니다.');
+        alert('✅ Initialized with BMI-based recommended goals.');
         updateGoalUI(result.goal, bmi);
       } else {
-        alert('❌ 기본 목표 저장 실패: ' + (result.message || '알 수 없는 오류'));
+        alert('❌ Failed to apply default goals: ' + (result.message || 'Unknown error'));
       }
-
     } catch (err) {
-      console.error("❌ 기본 목표 저장 중 오류:", err);
-      alert("서버 오류로 초기화에 실패했습니다.");
+      console.error("❌ Error applying default goals:", err);
+      alert("Failed to initialize due to server error.");
     }
   });
 });
