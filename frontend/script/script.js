@@ -98,7 +98,6 @@ function applyProgressColor(progress) {
   }
 }
 
-
 document.addEventListener('DOMContentLoaded', () => {
   
   document.getElementById('prev-month').addEventListener('click', () => {
