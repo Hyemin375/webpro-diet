@@ -8,6 +8,22 @@ let userId = null;
 
 const API_PREFIX = '/api/v1/mypage';
 
+const waitForDatabase = async (sequelize, retries = 10, delay = 1000) => {
+  while (retries) {
+    try {
+      await sequelize.authenticate();
+      console.log('✅ DB connection successful');
+      return;
+    } catch (err) {
+      console.log(`⏳ Waiting for DB... Retries left: ${retries - 1}`);
+      retries--;
+      await new Promise((res) => setTimeout(res, delay));
+    }
+  }
+  throw new Error('❌ Could not connect to the database.');
+};
+
+
 beforeAll(async () => {
   await sequelize.authenticate();
   await sequelize.sync({ force: true });
