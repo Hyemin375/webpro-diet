@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     totalCalories: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      defaultValue: 0,
     },
     isSuccess: {
       type: DataTypes.BOOLEAN,
