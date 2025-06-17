@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const trackingController = require('../controllers/trackingController');
-const authMiddleware = require('../middleware/auth');
+const authMiddleware = require('../middlewares/auth');
+
 /**
  * @swagger
  * /api/v1/tracking/calendar:
@@ -9,7 +10,7 @@ const authMiddleware = require('../middleware/auth');
  *     tags:
  *       - Tracking
  *     summary: Retrieve calendar tracking data by month
- *     description: Returns a list of daily tracking data for the specified year and month, including goal achievement status and calories consumed, based on the authenticated user.
+ *     description: "Returns a list of daily tracking data for the specified year and month, including goal achievement status and calories consumed, based on the authenticated user."
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -22,14 +23,14 @@ const authMiddleware = require('../middleware/auth');
  *               year:
  *                 type: integer
  *                 example: 2025
- *                 description: Year to fetch tracking data for (defaults to current year).
+ *                 description: "Year to fetch tracking data for (defaults to current year)."
  *               month:
  *                 type: integer
  *                 example: 5
- *                 description: Month to fetch tracking data for (1–12, defaults to current month).
+ *                 description: "Month to fetch tracking data for (1–12, defaults to current month)."
  *     responses:
  *       200:
- *         description: Successfully retrieved tracking data for the month.
+ *         description: "Successfully retrieved tracking data for the month."
  *         content:
  *           application/json:
  *             schema:
@@ -63,7 +64,7 @@ const authMiddleware = require('../middleware/auth');
  *                             type: integer
  *                             example: 1850
  *       400:
- *         description: Invalid year or month format.
+ *         description: "Invalid year or month format."
  *         content:
  *           application/json:
  *             schema:
@@ -76,7 +77,7 @@ const authMiddleware = require('../middleware/auth');
  *                   type: string
  *                   example: Invalid year or month. Month must be 1–12 and year must be a valid number.
  *       500:
- *         description: Server error occurred while fetching tracking data.
+ *         description: "Server error occurred while fetching tracking data."
  *         content:
  *           application/json:
  *             schema:
@@ -89,7 +90,7 @@ const authMiddleware = require('../middleware/auth');
  *                   type: string
  *                   example: Failed to fetch calendar tracking.
  */
-router.post('/calendar', authMiddleware, trackingController.getCalendarTracking);
+router.get('/calendar', authMiddleware, trackingController.getCalendarTracking);
 
 /**
  * @swagger
@@ -97,8 +98,8 @@ router.post('/calendar', authMiddleware, trackingController.getCalendarTracking)
  *   get:
  *     tags:
  *       - Tracking
- *     summary: Retrieve detailed meal tracking data for a specific date
- *     description: Returns the list of meals consumed on the given date, including nutritional information, for the authenticated user.
+ *     summary: Get detailed meal records for a specific date
+ *     description: "Returns the meals consumed on a specific date with nutrition info for the authenticated user."
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -109,10 +110,10 @@ router.post('/calendar', authMiddleware, trackingController.getCalendarTracking)
  *           type: string
  *           format: date
  *           example: "2025-05-30"
- *         description: Date for which to fetch tracking data (format: YYYY-MM-DD)
+ *         description: "Date in YYYY-MM-DD format"
  *     responses:
  *       200:
- *         description: Successfully retrieved meal tracking data for the specified date.
+ *         description: "Meal records retrieved successfully."
  *         content:
  *           application/json:
  *             schema:
@@ -129,7 +130,6 @@ router.post('/calendar', authMiddleware, trackingController.getCalendarTracking)
  *                   properties:
  *                     date:
  *                       type: string
- *                       format: date
  *                       example: "2025-05-30"
  *                     meals:
  *                       type: array
@@ -142,7 +142,7 @@ router.post('/calendar', authMiddleware, trackingController.getCalendarTracking)
  *                             example: lunch
  *                           foodName:
  *                             type: string
- *                             example: "Grilled Chicken"
+ *                             example: Grilled Chicken
  *                           calories:
  *                             type: integer
  *                             example: 350
@@ -162,7 +162,7 @@ router.post('/calendar', authMiddleware, trackingController.getCalendarTracking)
  *                             type: integer
  *                             example: 90
  *       400:
- *         description: Invalid date format
+ *         description: "Invalid date format"
  *         content:
  *           application/json:
  *             schema:
@@ -175,7 +175,7 @@ router.post('/calendar', authMiddleware, trackingController.getCalendarTracking)
  *                   type: string
  *                   example: Invalid date format. Expected YYYY-MM-DD.
  *       404:
- *         description: No meal data found for the specified date
+ *         description: "No meal data found"
  *         content:
  *           application/json:
  *             schema:
@@ -188,7 +188,7 @@ router.post('/calendar', authMiddleware, trackingController.getCalendarTracking)
  *                   type: string
  *                   example: No meal data found for 2025-05-30.
  *       500:
- *         description: Internal server error while retrieving data
+ *         description: "Internal server error"
  *         content:
  *           application/json:
  *             schema:

@@ -4,7 +4,7 @@ const { Tracking, TrackingDetails, User } = require('../models');
 
 exports.getCalendarTracking = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user.userId;
     const { year, month } = req.body;
 
     // year, month 유효성 검사
@@ -71,7 +71,7 @@ exports.getCalendarTracking = async (req, res) => {
 };
 
 exports.getTrackingByDate = async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.user.userId;
   const { date } = req.params;
 
   if (!dayjs(date, 'YYYY-MM-DD', true).isValid()) {

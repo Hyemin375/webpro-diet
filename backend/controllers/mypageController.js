@@ -5,7 +5,7 @@ const { sequelize } = require('../models');
 exports.getMyInfo = async (req, res) => {
   try {
     // 인증된 사용자 정보
-    const userId = req.user?.userId;
+    const userId = req.user.userId;
 
     if (!userId) {
       return res.status(401).json({ error: 'Authentication required' });
