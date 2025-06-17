@@ -9,10 +9,19 @@ module.exports = (sequelize, DataTypes) => {
     trackingId: {
       type: DataTypes.BIGINT,
       allowNull: false,
+      reference: {
+        model: 'Tracking',
+        key: 'trackingId',
+      },
+      onDelete: 'CASCADE',
     },
     mealtype: {
-      type: DataTypes.ENUM('breakfast', 'lunch', 'dinner'),
+      type: DataTypes.ENUM('breakfast', 'lunch', 'dinner', 'snack'),
       allowNull: false,
+    },
+    foodName: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     eatCalories: {
       type: DataTypes.INTEGER,

@@ -29,5 +29,14 @@ module.exports = (sequelize, DataTypes) => {
     updatedAt: 'modifiedAt',
   });
 
+  Tracking.associate = models => {
+    Tracking.hasMany(models.TrackingDetails, {
+      foreignKey: 'trackingId',
+      sourceKey: 'trackingId',
+      as: 'details',
+      onDelete: 'CASCADE'
+    });
+  };
+
   return Tracking;
 };
