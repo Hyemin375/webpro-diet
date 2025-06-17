@@ -31,6 +31,8 @@ app.use('/api/v1/tracking', trackingRoutes);
 const loggingRoutes = require('./routes/logging');
 app.use('/api/v1/tracking', loggingRoutes);
 
+const recommendRoutes = require('./routes/recommend');
+app.use('/api/v1', recommendRoutes);
 
 
 // 기본 라우트
