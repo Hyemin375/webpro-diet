@@ -87,6 +87,25 @@
       </div>
     </div>
 
+    <form id="trackingForm">
+      <input type="date" id="date" required />
+      <select id="mealType" required>
+        <option value="">Select Meal</option>
+        <option value="breakfast">Breakfast</option>
+        <option value="lunch">Lunch</option>
+        <option value="dinner">Dinner</option>
+        <option value="snack">Snack</option>
+      </select>
+      <input type="text" id="food" placeholder="Food Name" required />
+      <input type="number" id="calories" placeholder="Calories" required />
+      <input type="number" id="protein" placeholder="Protein" />
+      <input type="number" id="fat" placeholder="Fat" />
+      <input type="number" id="carbohydrate" placeholder="Carbohydrates" />
+      <input type="number" id="sugar" placeholder="Sugar" />
+      <input type="number" id="cholesterol" placeholder="Cholesterol" />
+      <button type="submit">Save Meal</button>
+    </form>
+
     <!-- 🔹 캘린더 -->
     <section class="calendar">
       <h2>Calendar</h2>
@@ -98,6 +117,27 @@
       </div>
       <div id="calendar-placeholder">Calendar will be displayed here</div>
     </section>
+
+    <!-- 모달 창 -->
+    <div id="edit-modal" class="popup hidden">
+      <div class="popup-content">
+        <h3>Edit Meal</h3>
+        <input type="text" id="edit-food" placeholder="Food name" />
+        <input type="number" id="edit-calories" placeholder="Calories" />
+        <input type="text" id="edit-meal-type" placeholder="Meal Type (e.g. lunch)" />
+        <input type="number" id="edit-protein" placeholder="Protein" />
+        <input type="number" id="edit-fat" placeholder="Fat" />
+        <input type="number" id="edit-carbohydrate" placeholder="Carbohydrate" />
+        <input type="number" id="edit-sugar" placeholder="Sugar" />
+        <input type="number" id="edit-cholesterol" placeholder="Cholesterol" />
+
+        <div class="popup-buttons">
+          <button id="save-edit">Save</button>
+          <button id="cancel-edit">Cancel</button>
+        </div>
+      </div>
+    </div>
+
   </main>
 
   <footer>

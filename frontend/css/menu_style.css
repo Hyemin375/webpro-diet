@@ -1,103 +1,107 @@
-body {
-  font-family: 'Segoe UI', sans-serif;
-  margin: 0;
-  background: #f9f9f9;
-}
-
-header {
-  background-color: #4CAF50;
-  color: white;
-  padding: 1em;
-  text-align: center;
-}
-
-.nav-right {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  display: flex;
-  gap: 10px;
-}
-
-.nav-right a {
-  text-decoration: none;
-  color: white;
-  font-weight: bold;
-  background: rgba(255, 255, 255, 0.15);
-  padding: 6px 12px;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-}
-
-.nav-right a:hover {
-  background: rgba(255, 255, 255, 0.3);
-}
-
-nav ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  justify-content: center;
-}
-
-nav li {
-  margin: 0 1em;
-}
-
-nav a {
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-}
-
 .container {
-  max-width: 700px;
-  margin: 2em auto;
-  padding: 0 1em;
+  max-width: 800px;
+  margin: auto;
   background: white;
-  border-radius: 8px;
+  padding: 2rem;
+  border-radius: 12px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-h2 {
+h1 {
   text-align: center;
-  color: #4CAF50;
+  margin-bottom: 2rem;
 }
 
-label {
-  font-weight: bold;
+.input-section {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2rem;
 }
 
-#categorySelect {
-  padding: 0.5em;
-  margin-left: 0.5em;
-  margin-right: 1em;
+select, button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
 }
 
-button {
-  padding: 0.5em 1em;
-  background: #4CAF50;
+.recommendation-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.recommend-item {
+  background: #f1f5f9;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+
+.recommend-item:hover {
+  transform: scale(1.02);
+}
+
+.recommend-card h4 {
+  margin: 0 0 0.5rem;
+}
+
+.recommend-card p {
+  margin: 0.25rem 0;
+}
+
+.details-btn {
+  margin-top: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  background: #2563eb;
   color: white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
 }
 
-button:hover {
-  background: #45a049;
+.details-btn:hover {
+  background: #1d4ed8;
 }
 
-.results {
-  margin-top: 2em;
+.no-result {
+  text-align: center;
+  color: #6b7280;
 }
 
-.results ul {
-  list-style: none;
-  padding: 0;
+/* Modal styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
 
-.results li {
-  padding: 0.5em 0;
-  border-bottom: 1px solid #ccc;
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;
+  position: relative;
+}
+
+.close {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  font-size: 1.5rem;
+  cursor: pointer;
 }

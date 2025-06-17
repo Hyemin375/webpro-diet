@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Meal Recommendation - Menu</title>
+  <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/menu_style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -41,6 +42,19 @@
     </div>
   </div>
 
+
+  <!-- 음식 정보 모달 -->
+  <div id="modal" class="modal hidden">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h3 id="modal-name"></h3>
+      <p id="modal-description"></p>
+      <p><strong>Calories:</strong> <span id="modal-calories"></span></p>
+      <canvas id="nutritionChart"></canvas>
+    </div>
+  </div>
+
+  <script src="../script/auth.js"></script>
   <script src="../script/menu.js" defer></script>
 </body>
 </html>

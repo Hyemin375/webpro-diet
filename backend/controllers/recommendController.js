@@ -2,8 +2,6 @@ const dayjs = require('dayjs');
 const axios = require('axios');
 const { Goal, Tracking } = require('../models');
 
-console.log("🔑 USDA_API_KEY:", process.env.USDA_API_KEY);
-
 const categoryKeywordMap = {
   protein: [
     'chicken breast', 'tofu', 'egg', 'salmon', 'beef',

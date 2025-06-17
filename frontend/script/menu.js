@@ -1,82 +1,85 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const token = localStorage.getItem('token');
-  const categorySelect = document.getElementById('categorySelect');
-  const recommendationList = document.getElementById('recommendationList');
+// ✅ 모달 요소 가져오기
+const modal = document.getElementById("modal");
+const modalName = document.getElementById("modal-name");
+const modalCalories = document.getElementById("modal-calories");
+const modalDescription = document.getElementById("modal-description");
+const modalCloseBtn = document.querySelector(".close");
 
-  if (!token) {
-    alert("Please log in first.");
-    window.location.href = "login.html";
-    return;
-  }
+// ✅ 카테고리 선택 & 버튼 클릭 시 추천 요청
+document.getElementById("getRecommendationBtn").addEventListener("click", async () => {
+  const category = document.getElementById("categorySelect").value;
+  const token = localStorage.getItem("token");
 
-  // 먼저 현재 칼로리 섭취 정보를 가져옵니다.
-  let calorieDeficit = null;
-
-  async function fetchGoalProgress() {
-    try {
-      const res = await fetch('http://localhost:4000/api/v1/goal/progress', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-      const today = data.today;
-      if (today.caloriesConsumed >= today.caloriesGoal) {
-        calorieDeficit = 0;
-        displayMessage("You've already reached your calorie goal for today!");
-        recommendationList.innerHTML = '';
-      } else {
-        calorieDeficit = today.caloriesGoal - today.caloriesConsumed;
-        console.log(`🔥 Calorie deficit: ${calorieDeficit}`);
+  try {
+    const res = await fetch(`http://localhost:4000/api/v1/recommendations?category=${category}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`
       }
-    } catch (err) {
-      console.error("❌ Failed to fetch goal progress:", err);
-      displayMessage("Unable to retrieve calorie information.");
-    }
-  }
-
-  async function fetchRecommendations(category) {
-    if (calorieDeficit === null) {
-      await fetchGoalProgress();
-    }
-
-    if (calorieDeficit <= 0) return;
-
-    try {
-      const res = await fetch(`http://localhost:4000/api/v1/recommendations?category=${category}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-
-      if (res.ok && data.data && data.data.length > 0) {
-        renderRecommendations(data.data);
-      } else {
-        displayMessage("No suitable recommendation found for today.");
-      }
-    } catch (err) {
-      console.error("❌ Failed to fetch food recommendations:", err);
-      displayMessage("An error occurred while fetching recommendations.");
-    }
-  }
-
-  function renderRecommendations(foods) {
-    recommendationList.innerHTML = '';
-    foods.forEach(food => {
-      const li = document.createElement('li');
-      li.textContent = `${food.name} - ${food.calories} ${food.unit}`;
-      recommendationList.appendChild(li);
     });
-  }
 
-  function displayMessage(message) {
-    recommendationList.innerHTML = `<li>${message}</li>`;
-  }
+    const result = await res.json();
+    console.log("🍽️ Recommendation response: ", result);
 
-  categorySelect.addEventListener('change', (e) => {
-    const category = e.target.value;
-    if (category) {
-      fetchRecommendations(category);
+    if (res.ok && result.data && result.data.length > 0) {
+      renderRecommendations(result.data);
+    } else {
+      renderNoResults("No suitable recommendation found for today.");
     }
-  });
+  } catch (err) {
+    console.error("❌ Failed to get recommendation:", err);
+    renderNoResults("Server error. Please try again later.");
+  }
+});
 
-  // 첫 로딩 시 목표 정보 가져오기
-  fetchGoalProgress();
+// ✅ 추천 음식 카드 렌더링
+function renderRecommendations(foods) {
+  const list = document.getElementById("recommendationList");
+  list.innerHTML = "";
+
+  foods.forEach(food => {
+    const li = document.createElement("li");
+    li.className = "recommend-item";
+
+    li.innerHTML = `
+      <div class="recommend-card">
+        <h4>${food.name}</h4>
+        <p>Calories: ${food.calories} ${food.unit}</p>
+        <button class="details-btn">Details</button>
+      </div>
+    `;
+
+    // 모달 상세정보 이벤트
+    li.querySelector(".details-btn").addEventListener("click", () => {
+      openModal(food);
+    });
+
+    list.appendChild(li);
+  });
+}
+
+// ✅ 결과 없음 처리
+function renderNoResults(message) {
+  const list = document.getElementById("recommendationList");
+  list.innerHTML = `<li class="no-result">${message}</li>`;
+}
+
+// ✅ 모달 열기
+function openModal(food) {
+  modalName.textContent = food.name;
+  modalCalories.textContent = `${food.calories} ${food.unit}`;
+  modalDescription.textContent = "More detailed nutritional data is not available in this demo.";
+
+  modal.classList.remove("hidden");
+}
+
+// ✅ 모달 닫기
+modalCloseBtn.addEventListener("click", () => {
+  modal.classList.add("hidden");
+});
+
+window.addEventListener("click", (e) => {
+  if (e.target === modal) {
+    modal.classList.add("hidden");
+  }
 });
