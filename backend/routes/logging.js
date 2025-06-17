@@ -259,7 +259,7 @@ router.put('/:date/:detailId', authMiddleware, loggingController.updateMealLog);
 
 /**
  * @swagger
- * /api/v1/logging/detail/{id}:
+ * /api/v1/tracking/detail/{id}:
  *   delete:
  *     summary: Delete a specific tracking detail
  *     description: Deletes a specific tracking detail and subtracts its calories from the related tracking record.
