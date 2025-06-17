@@ -257,4 +257,69 @@ router.post('/:date', authMiddleware, loggingController.logMealByDate);
  */
 router.put('/:date/:detailId', authMiddleware, loggingController.updateMealLog);
 
+/**
+ * @swagger
+ * /api/v1/tracking/detail/{id}:
+ *   delete:
+ *     summary: Delete a specific tracking detail
+ *     description: Deletes a food tracking record and updates totalCalories.
+ *     tags: [Tracking]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: ID of the tracking detail to delete
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - date
+ *             properties:
+ *               date:
+ *                 type: string
+ *                 format: date
+ *                 example: "2025-06-18"
+ *     responses:
+ *       200:
+ *         description: Tracking detail deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: Tracking detail deleted successfully.
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     totalCalories:
+ *                       type: integer
+ *                       example: 1340
+ *       404:
+ *         description: Detail or tracking not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Server error
+ */
+router.delete('/detail/:id', authMiddleware, loggingController.deleteTrackingDetail);
+
 module.exports = router;

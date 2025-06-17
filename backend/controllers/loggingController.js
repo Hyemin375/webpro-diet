@@ -1,6 +1,7 @@
 const dayjs = require('dayjs');
 const { Tracking, TrackingDetails, User } = require('../models');
 
+
 exports.logMealByDate = async (req, res) => {
   const userId = req.user.userId;
   const { date } = req.params;
@@ -55,11 +56,11 @@ exports.logMealByDate = async (req, res) => {
         userId,
         date,
         isSuccess: false,
-        totalCalories: 0  // ✅ 초기값 추가
+        totalCalories: 0 
       });
     }
 
-    // ✅ Create meal record
+    // Create meal record
     const detail = await TrackingDetails.create({
       trackingId: tracking.trackingId,
       mealtype: mealType,
@@ -72,7 +73,7 @@ exports.logMealByDate = async (req, res) => {
       eatChole: cholesterol || 0
     });
 
-    // ✅ Accumulate total calories
+    // Accumulate total calories
     tracking.totalCalories += calories;
     await tracking.save();
 
@@ -187,6 +188,58 @@ exports.updateMealLog = async (req, res) => {
     return res.status(500).json({
       status: 'error',
       message: 'Failed to update meal record.'
+    });
+  }
+};
+
+
+exports.deleteTrackingDetail = async (req, res) => {
+  const userId = req.user.userId;
+  const { id } = req.params;
+
+  try {
+    const detail = await TrackingDetails.findOne({
+      where: { detailId: id },
+      include: {
+        model: Tracking,
+        attributes: ['trackingId', 'userId', 'totalCalories']
+      }
+    });
+
+    if (!detail || !detail.Tracking) {
+      return res.status(404).json({
+        status: 'error',
+        message: `Tracking detail with id ${id} not found.`,
+      });
+    }
+
+    if (detail.Tracking.userId !== userId) {
+      return res.status(403).json({
+        status: 'error',
+        message: 'Access denied. This tracking detail does not belong to the user.',
+      });
+    }
+
+    const caloriesToSubtract = detail.eatCalories || 0;
+
+    await detail.destroy();
+
+    detail.Tracking.totalCalories = Math.max(0, detail.Tracking.totalCalories - caloriesToSubtract);
+    await detail.Tracking.save();
+
+    return res.status(200).json({
+      status: 'success',
+      message: 'Tracking detail deleted successfully.',
+      data: {
+        totalCalories: detail.Tracking.totalCalories,
+      },
+    });
+
+  } catch (err) {
+    console.error('❌ Error deleting tracking detail:', err);
+    return res.status(500).json({
+      status: 'error',
+      message: 'Failed to delete tracking detail.',
     });
   }
 };
