@@ -78,6 +78,9 @@ nav ul {
 nav li {
   margin: 0 1em;
 }
+nav ul li a:hover {
+  color: #007bff;
+}
 
 nav a {
   color: white;
