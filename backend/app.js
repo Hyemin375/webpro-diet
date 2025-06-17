@@ -34,6 +34,9 @@ app.use('/api/v1/tracking', loggingRoutes);
 const recommendRoutes = require('./routes/recommend');
 app.use('/api/v1', recommendRoutes);
 
+const searchRoutes = require('./routes/search');
+app.use('/api/v1/search', searchRoutes);
+
 
 // 기본 라우트
 app.get('/', (req, res) => res.send('NutriMate API running'));
