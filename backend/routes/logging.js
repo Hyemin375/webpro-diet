@@ -259,21 +259,33 @@ router.put('/:date/:detailId', authMiddleware, loggingController.updateMealLog);
 
 /**
  * @swagger
- * /api/v1/logging/detail/{id}:
+ * /api/v1/tracking/detail/{id}:
  *   delete:
  *     summary: Delete a specific tracking detail
- *     description: Deletes a specific tracking detail and subtracts its calories from the related tracking record.
- *     tags:
- *       - Logging
+ *     description: Deletes a food tracking record and updates totalCalories.
+ *     tags: [Tracking]
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - in: path
- *         name: id
+ *       - name: id
+ *         in: path
+ *         description: ID of the tracking detail to delete
  *         required: true
- *         description: The ID of the tracking detail to delete (detailId)
  *         schema:
  *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - date
+ *             properties:
+ *               date:
+ *                 type: string
+ *                 format: date
+ *                 example: "2025-06-18"
  *     responses:
  *       200:
  *         description: Tracking detail deleted successfully
@@ -292,23 +304,10 @@ router.put('/:date/:detailId', authMiddleware, loggingController.updateMealLog);
  *                   type: object
  *                   properties:
  *                     totalCalories:
- *                       type: number
- *                       example: 1200
- *       403:
- *         description: Access denied - the tracking detail does not belong to the user
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: error
- *                 message:
- *                   type: string
- *                   example: Access denied. This tracking detail does not belong to the user.
+ *                       type: integer
+ *                       example: 1340
  *       404:
- *         description: Tracking detail not found
+ *         description: Detail or tracking not found
  *         content:
  *           application/json:
  *             schema:
@@ -316,23 +315,10 @@ router.put('/:date/:detailId', authMiddleware, loggingController.updateMealLog);
  *               properties:
  *                 status:
  *                   type: string
- *                   example: error
  *                 message:
  *                   type: string
- *                   example: Tracking detail with id 1 not found.
  *       500:
- *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: error
- *                 message:
- *                   type: string
- *                   example: Failed to delete tracking detail.
+ *         description: Server error
  */
 router.delete('/detail/:id', authMiddleware, loggingController.deleteTrackingDetail);
 
