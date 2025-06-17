@@ -1,5 +1,10 @@
 // goal.js
 
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('updated') === 'true') {
+  location.reload(); // index.html 재진입 시 강제로 새로고침
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const token = localStorage.getItem('token');
   if (!token) {
@@ -45,26 +50,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!res.ok) return null;
     const user = await res.json();
-    document.querySelector('.user-profile h3').textContent = `Welcome, ${user.userName}`;
-    return { height: parseFloat(user.userHeight), weight: parseFloat(user.userWeight) };
+
+    const welcomeEl = document.querySelector('.user-profile h3');
+    if (welcomeEl) welcomeEl.textContent = `Welcome, ${user.userName}`;
+
+    return {
+      height: parseFloat(user.userHeight),
+      weight: parseFloat(user.userWeight)
+    };
   }
 
   function updateGoalUI(goal, bmi = null) {
     const cal = goal.calories || 0;
     const pro = goal.protein || 0;
-    document.getElementById('target-calories').textContent = cal;
-    document.getElementById('target-val').textContent = cal;
+
+    const targetEl = document.getElementById('target-calories');
+    const targetValEl = document.getElementById('target-val');
+    if (targetEl) targetEl.textContent = cal;
+    if (targetValEl) targetValEl.textContent = cal;
 
     if (bmi !== null) {
-      document.querySelector('.user-profile p').innerHTML = `BMI: ${bmi.toFixed(1)} | Target Calories: <span id="target-calories">${cal}</span> kcal`;
+      const bmiText = document.querySelector('.user-profile p');
+      if (bmiText) {
+        bmiText.innerHTML = `BMI: ${bmi.toFixed(1)} | Target Calories: <span id="target-calories">${cal}</span> kcal`;
+      }
     }
 
-    document.querySelectorAll('.goal-status strong')[1].textContent = `85 / ${pro} g`;
+    const proteinEl = document.querySelectorAll('.goal-status strong')[1];
+    if (proteinEl) proteinEl.textContent = `85 / ${pro} g`;
 
     const bars = document.querySelectorAll('.goal-status .progress-bar');
     if (bars[0]) bars[0].max = cal;
     if (bars[1]) bars[1].max = pro;
-    bars.forEach(applyProgressColor);
+    bars.forEach(bar => applyProgressColor?.(bar));
   }
 
   async function loadGoal() {
@@ -78,16 +96,62 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       if (!res.ok) return console.warn('❌ Failed to load goal:', res.status);
-
       const { goal } = await res.json();
+
       Object.entries(goal).forEach(([key, val]) => {
-        if (dom[`input${key.charAt(0).toUpperCase() + key.slice(1)}`]) {
-          dom[`input${key.charAt(0).toUpperCase() + key.slice(1)}`].value = val || '';
-        }
+        const inputKey = `input${key.charAt(0).toUpperCase() + key.slice(1)}`;
+        if (dom[inputKey]) dom[inputKey].value = val || '';
       });
+
       updateGoalUI(goal, bmi);
     } catch (err) {
       console.error('❌ Error loading goal:', err);
+    }
+  }
+
+  async function loadGoalProgress() {
+    try {
+      const res = await fetch('http://localhost:4000/api/v1/goal/progress', {
+        method: 'GET',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (!res.ok) return console.warn('❌ Failed to fetch progress:', res.status);
+      const data = await res.json();
+
+      // 오늘 칼로리
+      const todayEl = document.querySelector('.goal-status .today-progress');
+      if (todayEl) {
+        const { caloriesConsumed, caloriesGoal, achievedPercent } = data.today;
+        todayEl.innerHTML = `${caloriesConsumed} / ${caloriesGoal} kcal (${achievedPercent.toFixed(1)}%)`;
+      }
+
+      // 오늘 단백질
+      const proteinEl = document.querySelector('.goal-status .today-protein');
+      if (proteinEl && data.todayProtein) {
+        const { consumed, goal, percent } = data.todayProtein;
+        proteinEl.innerHTML = `${consumed} / ${goal} g (${percent.toFixed(1)}%)`;
+      }
+
+      // 지난 7일
+      const weekEl = document.querySelector('.goal-status .week-progress');
+      if (weekEl) {
+        const avg = data.summary.last7days.averageAchievedPercent;
+        const max = 1800 * 7;
+        const consumed = Math.round((avg / 100) * max);
+        weekEl.innerHTML = `${consumed} / ${max} kcal (${avg.toFixed(1)}%)`;
+      }
+
+      // 지난 30일
+      const monthEl = document.querySelector('.goal-status .month-progress');
+      if (monthEl) {
+        const avg = data.summary.last30days.averageAchievedPercent;
+        const max = 1800 * 30;
+        const consumed = Math.round((avg / 100) * max);
+        monthEl.innerHTML = `${consumed} / ${max} kcal (${avg.toFixed(1)}%)`;
+      }
+    } catch (err) {
+      console.error('❌ Error loading progress:', err);
     }
   }
 
@@ -185,7 +249,6 @@ document.addEventListener('DOMContentLoaded', () => {
     dom.popup.classList.remove('hidden');
     loadGoal();
   });
-
   dom.closePopup?.addEventListener('click', () => dom.popup.classList.add('hidden'));
   dom.saveBtn?.addEventListener('click', saveGoal);
   dom.reloadBtn?.addEventListener('click', () => {
@@ -194,6 +257,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   dom.recoBtn?.addEventListener('click', applyRecommendedGoals);
 
+  // 초기 실행
   loadGoal();
+  loadGoalProgress();
   handleAvatarEmoji();
 });

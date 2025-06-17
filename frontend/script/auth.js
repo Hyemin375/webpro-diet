@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const logoutLink = document.getElementById("logout");
   const deleteBtn = document.getElementById("delete-account");
 
-  // 🔹 로그인/로그아웃 UI 토글
+  // Toggle UI based on login status
   if (loginLink && registerLink && logoutLink) {
     if (isLoggedIn) {
       loginLink.style.display = "none";
@@ -20,13 +20,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     logoutLink.addEventListener("click", (e) => {
       e.preventDefault();
-      localStorage.setItem("isLoggedIn", "false");
+      localStorage.clear();
       alert("You have been logged out.");
       window.location.href = "landing.html";
     });
   }
 
-  // 🔹 로그인
+  // Login
   const loginForm = document.getElementById('loginForm');
   if (loginForm) {
     loginForm.addEventListener('submit', async function (e) {
@@ -46,52 +46,38 @@ document.addEventListener("DOMContentLoaded", function () {
         if (res.ok) {
           localStorage.setItem('token', data.accessToken);
           localStorage.setItem('userLoginId', userLoginId);
-          if (data.user) localStorage.setItem('user', JSON.stringify(data.user));
-          localStorage.setItem("isLoggedIn", "true");
-          alert("로그인 성공!");
+          localStorage.setItem('isLoggedIn', 'true');
+          alert("Login successful!");
           window.location.href = "index.html";
         } else {
-          alert("로그인 실패: " + data.message);
+          alert("❌ Login failed: " + (data.message || "Unknown error"));
         }
       } catch (err) {
-        alert("서버 응답 실패");
+        alert("Server error: " + err.message);
       }
     });
   }
 
-  // 🔹 회원가입
+  // Register
   const registerForm = document.getElementById('registerForm');
   if (registerForm) {
     registerForm.addEventListener('submit', async function (e) {
       e.preventDefault();
 
-      const userLoginId = document.getElementById('userId').value.trim();
-      const userPw = document.getElementById('userPw').value;
-      const userName = document.getElementById('userName').value.trim();
-      const userSex = document.getElementById('userSex').value;
-      const userAge = parseInt(document.getElementById('userAge').value);
-      const userWeight = parseFloat(document.getElementById('userWeight').value);
-      const userHeight = parseFloat(document.getElementById('userHeight').value);
-
-      if (!userLoginId || !userPw || !userName || !userSex || isNaN(userAge) || isNaN(userWeight) || isNaN(userHeight)) {
-        alert("모든 필드를 올바르게 입력해주세요.");
-        return;
-      }
-
-      if (userAge <= 0 || userWeight <= 0 || userHeight <= 0) {
-        alert("나이, 키, 몸무게는 0보다 커야 합니다.");
-        return;
-      }
-
       const user = {
-        userLoginId,
-        userPw,
-        userName,
-        userSex,
-        userAge,
-        userWeight,
-        userHeight
+        userLoginId: document.getElementById('userId').value.trim(),
+        userPw: document.getElementById('userPw').value,
+        userName: document.getElementById('userName').value.trim(),
+        userSex: document.getElementById('userSex').value,
+        userAge: parseInt(document.getElementById('userAge').value),
+        userWeight: parseFloat(document.getElementById('userWeight').value),
+        userHeight: parseFloat(document.getElementById('userHeight').value)
       };
+
+      if (Object.values(user).some(v => v === '' || v === null || Number.isNaN(v))) {
+        alert("❗ Please fill in all required fields correctly.");
+        return;
+      }
 
       try {
         const res = await fetch('http://localhost:4000/api/v1/auth/register', {
@@ -100,30 +86,26 @@ document.addEventListener("DOMContentLoaded", function () {
           body: JSON.stringify(user)
         });
 
+        const result = await res.json();
+
         if (!res.ok) {
-          const err = await res.json();
-          alert("회원가입 실패: " + (err.message || "알 수 없는 오류"));
+          alert("❌ Registration failed: " + (result.message || "Unknown error"));
           return;
         }
 
-        const bmi = userWeight / Math.pow(userHeight / 100, 2);
-        function getRecommendedGoals(bmi) {
-          if (bmi < 18.5) return { calories: 2200, protein: 90, fat: 60, carbohydrate: 300, sugar: 30, cholesterol: 200 };
-          if (bmi < 25) return { calories: 2000, protein: 75, fat: 55, carbohydrate: 250, sugar: 25, cholesterol: 180 };
-          if (bmi < 30) return { calories: 1800, protein: 65, fat: 50, carbohydrate: 220, sugar: 20, cholesterol: 160 };
-          return { calories: 1600, protein: 60, fat: 45, carbohydrate: 200, sugar: 15, cholesterol: 150 };
-        }
-
-        const goal = getRecommendedGoals(bmi);
-
+        // Auto-login after successful registration
         const loginRes = await fetch('http://localhost:4000/api/v1/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userLoginId, userPw })
+          body: JSON.stringify({ userLoginId: user.userLoginId, userPw: user.userPw })
         });
 
         const loginData = await loginRes.json();
         const token = loginData.accessToken;
+
+        // Set goals based on BMI
+        const bmi = user.userWeight / Math.pow(user.userHeight / 100, 2);
+        const goal = getRecommendedGoals(bmi);
 
         await fetch('http://localhost:4000/api/v1/goal', {
           method: 'POST',
@@ -134,23 +116,30 @@ document.addEventListener("DOMContentLoaded", function () {
           body: JSON.stringify(goal)
         });
 
-        alert("회원가입 및 기본 목표 설정 완료!");
-        window.location.href = "login.html";
+        alert("🎉 Registration and goal setup complete!");
+        window.location.href = 'login.html';
       } catch (err) {
-        alert("서버 연결 실패: " + err.message);
+        alert("Server connection failed: " + err.message);
       }
     });
+
+    function getRecommendedGoals(bmi) {
+      if (bmi < 18.5) return { calories: 2200, protein: 90, fat: 60, carbohydrate: 300, sugar: 30, cholesterol: 200 };
+      if (bmi < 25) return { calories: 2000, protein: 75, fat: 55, carbohydrate: 250, sugar: 25, cholesterol: 180 };
+      if (bmi < 30) return { calories: 1800, protein: 65, fat: 50, carbohydrate: 220, sugar: 20, cholesterol: 160 };
+      return { calories: 1600, protein: 60, fat: 45, carbohydrate: 200, sugar: 15, cholesterol: 150 };
+    }
   }
 
-  // 🔹 계정 삭제
+  // Delete account
   if (deleteBtn) {
     deleteBtn.addEventListener('click', async () => {
-      const confirmed = confirm('정말로 계정을 삭제하시겠습니까? 복구할 수 없습니다.');
+      const confirmed = confirm('Are you sure you want to delete your account? This action cannot be undone.');
       if (!confirmed) return;
 
       const token = localStorage.getItem('token');
       if (!token) {
-        alert('먼저 로그인하세요.');
+        alert('Please log in first.');
         window.location.href = 'login.html';
         return;
       }
@@ -162,15 +151,15 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         if (res.ok) {
-          alert('계정이 삭제되었습니다.');
+          alert('Account deleted successfully.');
           localStorage.clear();
           window.location.href = 'landing.html';
         } else {
           const data = await res.json();
-          alert('❌ 계정 삭제 실패: ' + (data.message || '오류 발생'));
+          alert('❌ Failed to delete account: ' + (data.message || 'Server error'));
         }
       } catch (err) {
-        alert('서버 연결 실패');
+        alert('Server connection failed.');
       }
     });
   }

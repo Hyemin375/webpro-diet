@@ -99,6 +99,58 @@ function applyProgressColor(progress) {
 }
 
 
+document.getElementById("trackingForm").addEventListener("submit", async function (e) {
+  e.preventDefault();
+
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("You must be logged in.");
+    return;
+  }
+
+  const date = document.getElementById("date").value;
+  const mealType = document.getElementById("mealType").value;
+  const food = document.getElementById("food").value;
+  const calories = parseInt(document.getElementById("calories").value);
+  const protein = parseFloat(document.getElementById("protein").value) || 0;
+  const fat = parseFloat(document.getElementById("fat").value) || 0;
+  const carbohydrate = parseFloat(document.getElementById("carbohydrate").value) || 0;
+  const sugar = parseFloat(document.getElementById("sugar").value) || 0;
+  const cholesterol = parseFloat(document.getElementById("cholesterol").value) || 0;
+
+  try {
+    const response = await fetch(`http://localhost:4000/api/v1/tracking/${date}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        mealType,
+        food,
+        calories,
+        protein,
+        fat,
+        carbohydrate,
+        sugar,
+        cholesterol,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.status === 201) {
+      alert("Meal successfully logged!");
+    } else {
+      alert(`❌ Failed to log meal: ${data.message}`);
+    }
+  } catch (err) {
+    console.error("Error logging meal:", err);
+    alert("Server error. Please try again later.");
+  }
+});
+
+
 document.addEventListener('DOMContentLoaded', () => {
   
   document.getElementById('prev-month').addEventListener('click', () => {
@@ -118,33 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.progress-bar').forEach((progress) => {
     applyProgressColor(progress);
   });
-
-    // 로그인 상태 기반 버튼 토글
-  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-
-  const loginLink = document.getElementById("login-link");
-  const registerLink = document.getElementById("register-link");
-  const logoutLink = document.getElementById("logout");
-  const deleteAccountLink = document.getElementById("delete-account");
-
-  if (isLoggedIn) {
-    loginLink.style.display = "none";
-    registerLink.style.display = "none";
-    logoutLink.style.display = "inline";
-  } else {
-    loginLink.style.display = "inline";
-    registerLink.style.display = "inline";
-    logoutLink.style.display = "none";
-  }
-
-  // 로그아웃 동작
-  logoutLink.addEventListener("click", (e) => {
-    e.preventDefault();
-    localStorage.setItem("isLoggedIn", "false");
-    alert("You have been logged out.");
-    window.location.href = "landing.html";
-  });
-
 });
 
 function applyIndividualProgressColors() {
