@@ -1,23 +1,3 @@
-window.addEventListener("DOMContentLoaded", () => {
-  const avatar = document.getElementById("avatar-img");
-  const firstCurrVal = document.querySelector(".curr-val");
-  const firstMaxVal = document.querySelector(".max-val");
-
-  if (!avatar || !firstCurrVal || !firstMaxVal) return;
-
-  const today = parseFloat(firstCurrVal.textContent.trim());
-  const target = parseFloat(firstMaxVal.textContent.trim());
-
-  if (isNaN(today) || isNaN(target) || target === 0) return;
-
-  const percent = (today / target) * 100;
-
-  avatar.src = Math.round(percent) >= 100 ? "happy.svg" : "sad.webp";
-});
-
-
-
-
 
 let currentDate = new Date();
 
