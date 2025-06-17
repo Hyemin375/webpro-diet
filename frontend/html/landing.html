@@ -5,31 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Welcome to Diet Calendar</title>
   <link rel="stylesheet" href="../css/landing_style.css" />
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 </head>
 <body>
-  <header>
-    <h1>Diet Calendar</h1>
-    <nav>
-      <ul>
-        <li><a href="login.html">Login</a></li>
-        <li><a href="register.html">Register</a></li>
-      </ul>
-    </nav>
+  <header class="landing-header">
+    <div class="container">
+      <h1 class="logo">Diet Calendar</h1>
+      
+    </div>
   </header>
 
-  <main class="landing-main">
-    <section class="intro-box">
-      <h2>Your personalized diet tracking assistant</h2>
-      <p>Track calories, monitor your progress, and stay healthy with ease!</p>
-      <div class="button-group">
-        <a href="login.html" class="btn">Login</a>
-        <a href="register.html" class="btn">Register</a>
+  <main class="hero" data-aos="fade-up">
+    <div class="hero-content">
+      <h2>Your Personalized Diet Tracker</h2>
+      <p>Set goals, track progress, and stay motivated on your health journey.</p>
+      <div class="cta-buttons">
+        <a href="login.html" class="btn">Get Started</a>
+        <a href="register.html" class="btn-secondary">Join Now</a>
       </div>
-    </section>
+    </div>
+    <div class="hero-image" data-aos="zoom-in">
+      <img src="../assets/HealthyFood.jpg" alt="Healthy Lifestyle Illustration" />
+    </div>
   </main>
 
-  <footer>
-    <p>&copy; 2025 Diet Calendar App</p>
+  <footer class="footer">
+    <p>&copy; 2025 Diet Calendar. All rights reserved.</p>
   </footer>
+
+  <script>
+    AOS.init();
+  </script>
 </body>
 </html>
