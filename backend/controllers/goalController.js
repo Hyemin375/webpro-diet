@@ -265,7 +265,7 @@ exports.getProgress = async (req, res) => {
     const thirtyDaysAgo = dayjs().subtract(29, 'day').format('YYYY-MM-DD');
 
     const todayTracking = await Tracking.findOne({ where: { userId, date: today } });
-    const todayCalories = todayTracking ? todayTracking.caloriesConsumed : 0;
+    const todayCalories = todayTracking ? todayTracking.totalCalories : 0;
     const todayPercent = goal.goalCalories > 0 ? (todayCalories / goal.goalCalories) * 100 : 0;
 
     const last7 = await Tracking.findAll({

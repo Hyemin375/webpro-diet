@@ -325,7 +325,7 @@ router.put('/:date/:detailId', authMiddleware, loggingController.updateMealLog);
  *         content:
  *           application/json:
  *             schema:
- *               type: object
+ *               type: objectg
  *               properties:
  *                 status:
  *                   type: string

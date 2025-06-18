@@ -247,23 +247,48 @@ function openEditModal(date, index) {
 
   document.getElementById("edit-modal").classList.remove("hidden");
 
-  document.getElementById("save-edit").onclick = () => {
-    const updatedMeal = {
-      food: document.getElementById("edit-food").value,
-      calories: +document.getElementById("edit-calories").value,
-      mealType: document.getElementById("edit-meal-type").value,
-      protein: +document.getElementById("edit-protein").value || 0,
-      fat: +document.getElementById("edit-fat").value || 0,
-      carbohydrate: +document.getElementById("edit-carbohydrate").value || 0,
-      sugar: +document.getElementById("edit-sugar").value || 0,
-      cholesterol: +document.getElementById("edit-cholesterol").value || 0
-    };
+  document.getElementById("save-edit").onclick = async () => {
+  const updatedMeal = {
+    food: document.getElementById("edit-food").value,
+    calories: +document.getElementById("edit-calories").value,
+    mealType: document.getElementById("edit-meal-type").value,
+    protein: +document.getElementById("edit-protein").value || 0,
+    fat: +document.getElementById("edit-fat").value || 0,
+    carbohydrate: +document.getElementById("edit-carbohydrate").value || 0,
+    sugar: +document.getElementById("edit-sugar").value || 0,
+    cholesterol: +document.getElementById("edit-cholesterol").value || 0
+  };
 
-    mealData[date][index] = updatedMeal;
-    loadMealsForDate(date);
-    updateCalendarDisplay();
+  const detailId = mealData[date][index].id; // 서버에서 받은 식사 id
+
+  try {
+      const response = await fetch(`${API_BASE}/tracking/${date}/${detailId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(updatedMeal)
+      });
+
+      if (response.ok) {
+        alert("✅ 수정 성공");
+        mealData[date][index] = { ...updatedMeal, id: detailId };
+        loadMealsForDate(date);
+        updateCalendarDisplay();
+        updateGoalStatus?.();
+      } else {
+        const error = await response.json();
+        alert(`❌ 수정 실패: ${error.message}`);
+      }
+    } catch (err) {
+      console.error("🚨 서버와의 연결 실패:", err);
+      alert("서버 오류");
+    }
+
     document.getElementById("edit-modal").classList.add("hidden");
   };
+
 
   document.getElementById("cancel-edit").onclick = () => {
     document.getElementById("edit-modal").classList.add("hidden");
