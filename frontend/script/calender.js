@@ -195,8 +195,11 @@ async function fetchMealsForDate(date) {
       }
     });
 
-    if (!response.ok) throw new Error(`HTTP error ${response.status}`);
-    const data = await response.json();
+    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+    const data = await res.json();
+
+    // mealData 갱신
+    mealData[date] = data.data?.meals || [];
 
     // 이후 data.data.meals 등을 사용하여 UI에 렌더링
     console.log(data);
