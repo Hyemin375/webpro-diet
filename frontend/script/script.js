@@ -118,33 +118,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.progress-bar').forEach((progress) => {
     applyProgressColor(progress);
   });
-
-    // 로그인 상태 기반 버튼 토글
-  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-
-  const loginLink = document.getElementById("login-link");
-  const registerLink = document.getElementById("register-link");
-  const logoutLink = document.getElementById("logout");
-  const deleteAccountLink = document.getElementById("delete-account");
-
-  if (isLoggedIn) {
-    loginLink.style.display = "none";
-    registerLink.style.display = "none";
-    logoutLink.style.display = "inline";
-  } else {
-    loginLink.style.display = "inline";
-    registerLink.style.display = "inline";
-    logoutLink.style.display = "none";
-  }
-
-  // 로그아웃 동작
-  logoutLink.addEventListener("click", (e) => {
-    e.preventDefault();
-    localStorage.setItem("isLoggedIn", "false");
-    alert("You have been logged out.");
-    window.location.href = "landing.html";
-  });
-
 });
 
 function applyIndividualProgressColors() {

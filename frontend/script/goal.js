@@ -1,9 +1,14 @@
 // goal.js
 
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('updated') === 'true') {
+  location.reload(); // index.html 재진입 시 강제로 새로고침
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const token = localStorage.getItem('token');
   if (!token) {
-    alert('Login is required.');
+    console.error("❌ 인증 토큰이 없습니다. 로그인 후 이용해주세요.");
     window.location.href = 'login.html';
     return;
   }
@@ -31,6 +36,20 @@ document.addEventListener('DOMContentLoaded', () => {
     return weightKg / (heightM * heightM);
   }
 
+  function applyProgressColor(bar) {
+    const ratio = bar.value / bar.max;
+    if (ratio >= 1) {
+      bar.style.backgroundColor = '#4CAF50'; // 초록
+    } else if (ratio >= 0.75) {
+      bar.style.backgroundColor = '#FFC107'; // 노랑
+    } else if (ratio >= 0.5) {
+      bar.style.backgroundColor = '#FF9800'; // 주황
+    } else {
+      bar.style.backgroundColor = '#F44336'; // 빨강
+    }
+  }
+
+
   function getRecommendedGoals(bmi) {
     if (bmi < 18.5) return { calories: 2200, protein: 90, fat: 60, carbohydrate: 300, sugar: 30, cholesterol: 200 };
     if (bmi < 25) return { calories: 2000, protein: 75, fat: 55, carbohydrate: 250, sugar: 25, cholesterol: 180 };
@@ -45,26 +64,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!res.ok) return null;
     const user = await res.json();
-    document.querySelector('.user-profile h3').textContent = `Welcome, ${user.userName}`;
-    return { height: parseFloat(user.userHeight), weight: parseFloat(user.userWeight) };
+
+    const welcomeEl = document.querySelector('.user-profile h3');
+    if (welcomeEl) welcomeEl.textContent = `Welcome, ${user.userName}`;
+
+    return {
+      height: parseFloat(user.userHeight),
+      weight: parseFloat(user.userWeight)
+    };
   }
 
   function updateGoalUI(goal, bmi = null) {
     const cal = goal.calories || 0;
     const pro = goal.protein || 0;
-    document.getElementById('target-calories').textContent = cal;
-    document.getElementById('target-val').textContent = cal;
+
+    const targetEl = document.getElementById('target-calories');
+    const targetValEl = document.getElementById('target-val');
+    if (targetEl) targetEl.textContent = cal;
+    if (targetValEl) targetValEl.textContent = cal;
 
     if (bmi !== null) {
-      document.querySelector('.user-profile p').innerHTML = `BMI: ${bmi.toFixed(1)} | Target Calories: <span id="target-calories">${cal}</span> kcal`;
+      const bmiText = document.querySelector('.user-profile p');
+      if (bmiText) {
+        bmiText.innerHTML = `BMI: ${bmi.toFixed(1)} | Target Calories: <span id="target-calories">${cal}</span> kcal`;
+      }
     }
-
-    document.querySelectorAll('.goal-status strong')[1].textContent = `85 / ${pro} g`;
 
     const bars = document.querySelectorAll('.goal-status .progress-bar');
     if (bars[0]) bars[0].max = cal;
     if (bars[1]) bars[1].max = pro;
-    bars.forEach(applyProgressColor);
+    bars.forEach(bar => applyProgressColor?.(bar));
   }
 
   async function loadGoal() {
@@ -78,16 +107,62 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       if (!res.ok) return console.warn('❌ Failed to load goal:', res.status);
-
       const { goal } = await res.json();
+
       Object.entries(goal).forEach(([key, val]) => {
-        if (dom[`input${key.charAt(0).toUpperCase() + key.slice(1)}`]) {
-          dom[`input${key.charAt(0).toUpperCase() + key.slice(1)}`].value = val || '';
-        }
+        const inputKey = `input${key.charAt(0).toUpperCase() + key.slice(1)}`;
+        if (dom[inputKey]) dom[inputKey].value = val || '';
       });
+
       updateGoalUI(goal, bmi);
     } catch (err) {
       console.error('❌ Error loading goal:', err);
+    }
+  }
+
+  async function loadGoalProgress() {
+    try {
+      const res = await fetch('http://localhost:4000/api/v1/goal/progress', {
+        method: 'GET',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (!res.ok) return console.warn('❌ Failed to fetch progress:', res.status);
+      const data = await res.json();
+
+      // 오늘 칼로리
+      const todayEl = document.querySelector('.goal-status .today-progress');
+      if (todayEl) {
+        const { caloriesConsumed, caloriesGoal, achievedPercent } = data.today;
+        todayEl.innerHTML = `${caloriesConsumed} / ${caloriesGoal} kcal (${achievedPercent.toFixed(1)}%)`;
+      }
+
+      // 오늘 단백질
+      const proteinEl = document.querySelector('.goal-status .today-protein');
+      if (proteinEl && data.todayProtein) {
+        const { consumed, goal, percent } = data.todayProtein;
+        proteinEl.innerHTML = `${consumed} / ${goal} g (${percent.toFixed(1)}%)`;
+      }
+
+      // 지난 7일
+      const weekEl = document.querySelector('.goal-status .week-progress');
+      if (weekEl) {
+        const avg = data.summary.last7days.averageAchievedPercent;
+        const max = 1800 * 7;
+        const consumed = Math.round((avg / 100) * max);
+        weekEl.innerHTML = `${consumed} / ${max} kcal (${avg.toFixed(1)}%)`;
+      }
+
+      // 지난 30일
+      const monthEl = document.querySelector('.goal-status .month-progress');
+      if (monthEl) {
+        const avg = data.summary.last30days.averageAchievedPercent;
+        const max = 1800 * 30;
+        const consumed = Math.round((avg / 100) * max);
+        monthEl.innerHTML = `${consumed} / ${max} kcal (${avg.toFixed(1)}%)`;
+      }
+    } catch (err) {
+      console.error('❌ Error loading progress:', err);
     }
   }
 
@@ -180,12 +255,47 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+ async function updateGoalStatus() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1; // 👈 0-based → 1-based
+
+    try {
+      const res = await fetch("http://localhost:4000/api/v1/tracking/calendar", {
+        method: "POST",
+         headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ year, month })
+      });
+
+      if (!res.ok) throw new Error("Fetch failed");
+
+      const data = await res.json();
+      console.log("✅ 목표 달성 데이터:", data);
+
+      // 👉 예시: 오늘 날짜 기준으로 consumed 칼로리 넣기
+      const today = now.toISOString().split("T")[0];
+      const todayData = data.data.days.find(d => d.date === today);
+
+      if (todayData) {
+        document.querySelector(".goal-status .curr-val").textContent = todayData.caloriesConsumed;
+        // 추가적으로 퍼센트나 색상 갱신 등 UI 업데이트 가능
+      }
+
+    } catch (err) {
+      console.error("목표 상태 불러오기 실패:", err);
+    }
+  }
+
+
+
   // Event Listeners
   dom.openBtn?.addEventListener('click', () => {
     dom.popup.classList.remove('hidden');
     loadGoal();
   });
-
   dom.closePopup?.addEventListener('click', () => dom.popup.classList.add('hidden'));
   dom.saveBtn?.addEventListener('click', saveGoal);
   dom.reloadBtn?.addEventListener('click', () => {
@@ -194,6 +304,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   dom.recoBtn?.addEventListener('click', applyRecommendedGoals);
 
+  // 초기 실행
   loadGoal();
+  loadGoalProgress();
   handleAvatarEmoji();
+  updateGoalStatus();
 });

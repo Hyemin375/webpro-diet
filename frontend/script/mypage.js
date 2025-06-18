@@ -1,25 +1,22 @@
-// ✅ 1. 토큰 확인
+// ✅ Check token
 const token = localStorage.getItem('token');
 if (!token) {
-  alert("로그인이 필요합니다.");
+  alert("Login is required.");
   window.location.href = "login.html";
 }
 
-// ✅ 2. DOM 요소 참조
+// ✅ DOM elements
 const userNameInput = document.getElementById('userName');
 const userSexInput = document.getElementById('userSex');
 const userAgeInput = document.getElementById('userAge');
 const userWeightInput = document.getElementById('userWeight');
 const userHeightInput = document.getElementById('userHeight');
 
-// ✅ 3. 사용자 정보 불러오기
+// ✅ Load user profile info
 window.addEventListener('DOMContentLoaded', async () => {
   try {
     const res = await fetch('http://localhost:4000/api/v1/mypage/profile', {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
+      headers: { Authorization: `Bearer ${token}` }
     });
 
     if (res.ok) {
@@ -29,15 +26,16 @@ window.addEventListener('DOMContentLoaded', async () => {
       userAgeInput.value = user.userAge || '';
       userWeightInput.value = user.userWeight || '';
       userHeightInput.value = user.userHeight || '';
+      localStorage.setItem('user', JSON.stringify(user));
     } else {
-      console.warn("사용자 정보를 불러올 수 없습니다.");
+      console.warn("❌ Failed to load user info.");
     }
   } catch (err) {
-    console.error("불러오기 실패:", err);
+    console.error("❌ Error loading profile:", err);
   }
 });
 
-// ✅ 4. 회원 정보 수정
+// ✅ Update profile info
 document.getElementById('infoForm').addEventListener('submit', async function (e) {
   e.preventDefault();
 
@@ -62,12 +60,74 @@ document.getElementById('infoForm').addEventListener('submit', async function (e
     const data = await res.json();
 
     if (res.ok) {
-      alert("회원 정보가 수정되었습니다.");
+      alert("✅ Your profile has been updated.");
       localStorage.setItem('user', JSON.stringify(data.user));
+      location.reload(); // refresh to apply updated BMI
     } else {
-      alert("수정 실패: " + (data.message || "오류"));
+      alert("❌ Failed to update profile: " + (data.message || "Unknown error"));
     }
   } catch (err) {
-    alert("요청 실패");
+    console.error("❌ Request failed:", err);
+    alert("Failed to connect to server.");
+  }
+});
+
+// ✅ 5. 비밀번호 변경 처리
+document.getElementById('passwordForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+
+  const userLoginId = document.getElementById('userLoginId').value.trim();
+  const currentPassword = document.getElementById('currentPassword').value;
+  const newPassword = document.getElementById('newPassword').value;
+
+  if (!userLoginId || !currentPassword || !newPassword) {
+    alert("Please fill in all fields.");
+    return;
+  }
+
+  const token = localStorage.getItem('token');
+
+  try {
+    const res = await fetch('http://localhost:4000/api/v1/mypage/password', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        userLoginId,
+        currentPassword,
+        newPassword
+      })
+    });
+
+    const data = await res.json();
+
+    if (res.status === 200) {
+      alert(data.message || "Password changed successfully.");
+      document.getElementById('userLoginId').value = '';
+      document.getElementById('currentPassword').value = '';
+      document.getElementById('newPassword').value = '';
+
+      // 1. 입력 필드 초기화
+      document.getElementById('userLoginId').value = '';
+      document.getElementById('currentPassword').value = '';
+      document.getElementById('newPassword').value = '';
+
+      // 2. 저장된 인증 정보 삭제
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('userLoginId');
+      localStorage.setItem('isLoggedIn', 'false');
+
+      // 3. 로그인 페이지로 이동
+      alert("🔒 Please log in again with your new password.");
+      window.location.href = "login.html";
+    } else {
+      alert(data.message || "Failed to change password.");
+    }
+  } catch (err) {
+    console.error("❌ Password change error:", err);
+    alert("Server error while changing password.");
   }
 });

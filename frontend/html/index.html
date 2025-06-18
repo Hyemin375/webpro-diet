@@ -40,16 +40,16 @@
       </div>
 
       <div class="goal-status">
-        <p>Today's progress: <strong><span class="curr-val">0</span> / <span class="max-val">1800</span> kcal</strong></p>
+        <p>Today's Progress: <strong><span class="curr-val">0</span> / <span class="max-val">2000</span> kcal (<span class="percent-val">--</span>%)</strong></p>
         <progress class="progress-bar" value="0" max="1800"></progress>
 
-        <p>Today's Protein: <strong><span class="curr-val">0</span> / <span class="max-val">120</span> g</strong></p>
+        <p>Today's Protein: <strong><span class="curr-val">0</span> / <span class="max-val">100</span> g (<span class="percent-val">--</span>%)</strong></p>
         <progress class="progress-bar" value="0" max="120"></progress>
 
-        <p>Last Week: <strong><span class="curr-val">0</span> / <span class="max-val">12600</span> kcal</strong></p>
+        <p>Last Week: <strong><span class="curr-val">0</span> / <span class="max-val">12600</span> kcal (<span class="percent-val">--</span>%)</strong></p>
         <progress class="progress-bar" value="0" max="12600"></progress>
 
-        <p>Last Month: <strong><span class="curr-val">0</span> / <span class="max-val">54000</span> kcal</strong></p>
+        <p>Last Month: <strong><span class="curr-val">0</span> / <span class="max-val">54000</span> kcal (<span class="percent-val">--</span>%)</strong></p>
         <progress class="progress-bar" value="0" max="54000"></progress>
 
       </div>
@@ -98,13 +98,60 @@
       </div>
       <div id="calendar-placeholder">Calendar will be displayed here</div>
     </section>
+
+    <!-- 🔹 선택한 날짜의 식사 정보 표시 -->
+    <section id="meal-info-section" class="hidden">
+      <h3>Meals for <span id="selected-date-text"></span></h3>
+      <ul id="meal-list"></ul>
+    </section>
+
+    <!-- 🔹 식사 추가 폼 -->
+    <section id="add-meal-form-section" class="hidden">
+      <h3>Add Meal</h3>
+      <form id="add-meal-form">
+        <input id="date" type="date" required />
+        <input id="mealType" type="text" placeholder="Meal Type" required />
+        <input id="food" type="text" placeholder="Food Name" required />
+        <input id="calories" type="number" placeholder="Calories" required />
+        <input id="protein" type="number" placeholder="Protein (g)" />
+        <input id="fat" type="number" placeholder="Fat (g)" />
+        <input id="carbohydrate" type="number" placeholder="Carbohydrates (g)" />
+        <input id="sugar" type="number" placeholder="Sugar (g)" />
+        <input id="cholesterol" type="number" placeholder="Cholesterol (mg)" />
+        <button type="submit">Add Meal</button>
+      </form>
+    </section>
+
+
+    <!-- 모달 창 -->
+    <div id="edit-modal" class="popup hidden">
+      <div class="popup-content">
+        <h3>Edit Meal</h3>
+        <input type="text" id="edit-food" placeholder="Food name" />
+        <input type="number" id="edit-calories" placeholder="Calories" />
+        <input type="text" id="edit-meal-type" placeholder="Meal Type (e.g. lunch)" />
+        <input type="number" id="edit-protein" placeholder="Protein" />
+        <input type="number" id="edit-fat" placeholder="Fat" />
+        <input type="number" id="edit-carbohydrate" placeholder="Carbohydrate" />
+        <input type="number" id="edit-sugar" placeholder="Sugar" />
+        <input type="number" id="edit-cholesterol" placeholder="Cholesterol" />
+
+        <div class="popup-buttons">
+          <button id="save-edit">Save</button>
+          <button id="cancel-edit">Cancel</button>
+        </div>
+      </div>
+    </div>
+
   </main>
 
   <footer>
     <p>&copy; 2025 Diet Calendar App</p>
   </footer>
 
-  <script src="../script/script.js" defer></script>
-  <script src="../script/goal.js"></script>
+  <script src="../script/calender.js" defer></script>
+  <script src="../script/auth.js"></script>
+  <script src="../script/goal.js" defer></script>
+
 </body>
 </html>
