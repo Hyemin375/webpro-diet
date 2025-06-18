@@ -29,15 +29,16 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const meal = {
-    mealType: document.getElementById("add-meal-type").value,
-    food: document.getElementById("add-food").value,
-    calories: +document.getElementById("add-calories").value,
-    protein: +document.getElementById("add-protein").value || 0,
-    fat: +document.getElementById("add-fat").value || 0,
-    carbohydrate: +document.getElementById("add-carbohydrate").value || 0,
-    sugar: +document.getElementById("add-sugar").value || 0,
-    cholesterol: +document.getElementById("add-cholesterol").value || 0
+    mealType: document.getElementById("mealType").value,
+    food: document.getElementById("food").value,
+    calories: +document.getElementById("calories").value,
+    protein: +document.getElementById("protein").value || 0,
+    fat: +document.getElementById("fat").value || 0,
+    carbohydrate: +document.getElementById("carbohydrate").value || 0,
+    sugar: +document.getElementById("sugar").value || 0,
+    cholesterol: +document.getElementById("cholesterol").value || 0
   };
+
 
   // 필수 값 확인
   if (!meal.mealType || !meal.food || !meal.calories) {
