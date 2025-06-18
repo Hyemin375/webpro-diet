@@ -105,3 +105,16 @@ select, button {
   font-size: 1.5rem;
   cursor: pointer;
 }
+
+
+.menu-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .menu-grid {
+    flex-direction: column;
+  }
+}
