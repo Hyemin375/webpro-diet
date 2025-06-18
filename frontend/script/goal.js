@@ -23,9 +23,9 @@ document.addEventListener('DOMContentLoaded', () => {
     inputCalories: document.getElementById('targetCalories'),
     inputProtein: document.getElementById('targetProtein'),
     inputFat: document.getElementById('targetFat'),
-    inputCarb: document.getElementById('targetCarbohydrate'),
+    inputCarbohydrate: document.getElementById('targetCarbohydrate'),  //수정
     inputSugar: document.getElementById('targetSugar'),
-    inputChol: document.getElementById('targetCholesterol'),
+    inputCholesterol: document.getElementById('targetCholesterol'),   //수정
     avatar: document.getElementById('avatar'),
     firstCurrVal: document.querySelector('.curr-val'),
     firstMaxVal: document.querySelector('.max-val')
@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function saveGoal() {
     const goal = ['Calories', 'Protein', 'Fat', 'Carbohydrate', 'Sugar', 'Cholesterol'].reduce((acc, key) => {
-      const val = parseInt(dom[`input${key}`].value);
+      const val = parseInt(dom[`input${key}`]?.value);
       if (isNaN(val)) acc.error = true;
       acc[key.toLowerCase()] = val;
       return acc;
@@ -209,9 +209,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if ([200, 201].includes(res.status)) {
         alert('🎉 Goal saved successfully!');
         dom.popup.classList.add('hidden');
+
         const user = await fetchUserInfo();
         const bmi = user ? calculateBMI(user.height, user.weight) : null;
+
         updateGoalUI(result.goal, bmi);
+        await updateGoalStatus();
+        handleAvatarEmoji();
       } else {
         alert('❌ Failed to save: ' + (result.message || 'Unknown error'));
       }
@@ -288,8 +292,6 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error("목표 상태 불러오기 실패:", err);
     }
   }
-
-
 
   // Event Listeners
   dom.openBtn?.addEventListener('click', () => {

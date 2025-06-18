@@ -121,7 +121,7 @@ document.addEventListener("DOMContentLoaded", function () {
           body: JSON.stringify(goal)
         });
 
-        alert("🎉 Registration and goal setup complete!");
+        alert("🎉 Registration and goal setup complete! The BMI-based recommended is set");
         window.location.href = 'login.html';
       } catch (err) {
         alert("Server connection failed: " + err.message);
