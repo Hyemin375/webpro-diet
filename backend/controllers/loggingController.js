@@ -1,5 +1,5 @@
 const dayjs = require('dayjs');
-const { Tracking, TrackingDetails, User } = require('../models');
+const { Tracking, TrackingDetails, User, Goal} = require('../models');
 
 
 exports.logMealByDate = async (req, res) => {
@@ -75,6 +75,15 @@ exports.logMealByDate = async (req, res) => {
 
     // Accumulate total calories
     tracking.totalCalories += calories;
+
+    
+    // 누적 후 목표 칼로리 비교
+    const goal = await Goal.findOne({ where: { userId } });
+
+    if (goal && tracking.totalCalories >= goal.goalCalories) {
+      tracking.isSuccess = true;
+    }
+
     await tracking.save();
 
     return res.status(201).json({
@@ -103,7 +112,6 @@ exports.logMealByDate = async (req, res) => {
   }
 };
 
-
 exports.updateMealLog = async (req, res) => {
   const userId = req.user.userId;
   const { date, detailId } = req.params;
@@ -118,7 +126,6 @@ exports.updateMealLog = async (req, res) => {
     cholesterol
   } = req.body;
 
-  // 날짜 유효성 검사
   if (!dayjs(date, 'YYYY-MM-DD', true).isValid()) {
     return res.status(400).json({
       status: 'error',
@@ -127,7 +134,6 @@ exports.updateMealLog = async (req, res) => {
   }
 
   try {
-    // 1. Tracking 데이터 찾기
     const tracking = await Tracking.findOne({
       where: { userId, date }
     });
@@ -139,7 +145,6 @@ exports.updateMealLog = async (req, res) => {
       });
     }
 
-    // 2. 해당 detailId 찾기 (trackingId 포함 조건)
     const detail = await TrackingDetails.findOne({
       where: {
         detailId,
@@ -154,7 +159,10 @@ exports.updateMealLog = async (req, res) => {
       });
     }
 
-    // 3. 값이 있으면 업데이트 (부분 업데이트 지원)
+    // ✅ 기존 칼로리 백업
+    const prevCalories = detail.eatCalories;
+
+    // ✅ 값이 있으면 업데이트
     if (mealType) detail.mealtype = mealType;
     if (food) detail.foodName = food;
     if (calories !== undefined) detail.eatCalories = calories;
@@ -165,6 +173,22 @@ exports.updateMealLog = async (req, res) => {
     if (cholesterol !== undefined) detail.eatChole = cholesterol;
 
     await detail.save();
+
+    // ✅ Tracking의 totalCalories 갱신
+    const updatedCalories = detail.eatCalories;
+    const diff = updatedCalories - prevCalories;
+    tracking.totalCalories = Math.max(0, tracking.totalCalories + diff);
+
+    // ✅ 목표와 비교하여 isSuccess 갱신
+    const goal = await Goal.findOne({ where: { userId } });
+
+    if (goal && tracking.totalCalories >= goal.goalCalories) {
+      tracking.isSuccess = true;
+    } else {
+      tracking.isSuccess = false;
+    }
+
+    await tracking.save();
 
     return res.status(200).json({
       status: 'success',
@@ -179,7 +203,9 @@ exports.updateMealLog = async (req, res) => {
         fat: detail.eatFat,
         carbohydrate: detail.eatCarbon,
         sugar: detail.eatSugar,
-        cholesterol: detail.eatChole
+        cholesterol: detail.eatChole,
+        totalCalories: tracking.totalCalories,
+        isSuccess: tracking.isSuccess
       }
     });
 

@@ -1,13 +1,12 @@
 const dayjs = require('dayjs');
 const { Op } = require('sequelize');
-const { Tracking, TrackingDetails, User } = require('../models');
+const { Tracking, TrackingDetails, User, Goal } = require('../models'); // Goal 추가
 
 exports.getCalendarTracking = async (req, res) => {
   try {
     const userId = req.user.userId;
     const { year, month } = req.body;
 
-    // year, month 유효성 검사
     if ((year && isNaN(year)) || (month && (isNaN(month) || month < 1 || month > 12))) {
       return res.status(400).json({
         status: 'error',
@@ -15,13 +14,16 @@ exports.getCalendarTracking = async (req, res) => {
       });
     }
 
-    // 기본값: 이번 달
     const targetYear = year || dayjs().year();
-    const targetMonth = month || dayjs().month() + 1; // dayjs는 0-indexed month
+    const targetMonth = month || dayjs().month() + 1;
     const startDate = dayjs(`${targetYear}-${targetMonth}-01`);
     const endDate = startDate.endOf('month');
 
-    // 모든 트래킹 데이터 가져오기 (Tracking + TrackingDetails 조인)
+    const goal = await Goal.findOne({ where: { userId } });
+    console.log('[DEBUG] Goal fetched:', goal);
+    console.log('[DEBUG] Goal calories:', goal?.goalCalories);
+
+
     const trackings = await Tracking.findAll({
       where: {
         userId,
@@ -32,24 +34,35 @@ exports.getCalendarTracking = async (req, res) => {
       include: [{ model: TrackingDetails }]
     });
 
-    // 날짜별 결과 구성
     const days = [];
+
     for (
       let d = startDate;
       d.isBefore(endDate) || d.isSame(endDate);
       d = d.add(1, 'day')
     ) {
       const dateStr = d.format('YYYY-MM-DD');
-      const record = trackings.find(t => t.date === dateStr);
+      const record = trackings.find(t => dayjs(t.date).format('YYYY-MM-DD') === dateStr);
 
-      const caloriesConsumed = record?.TrackingDetails?.reduce(
-        (sum, item) => sum + (item.eatCalories || 0),
-        0
-      ) || 0;
+      const totalCalories = record?.totalCalories || 0;
 
-      const isSuccess = record?.isSuccess || false;
+      let isSuccess = false;
+      if (goal && totalCalories >= goal.goalCalories) {
+        isSuccess = true;
 
-      days.push({ date: dateStr, isSuccess, caloriesConsumed });
+        // ✅ DB에 저장된 값이 false면 update
+        if (record && !record.isSuccess) {
+          record.isSuccess = true;
+          await record.save();
+        }
+      } else {
+        if (record && record.isSuccess) {
+          record.isSuccess = false;
+          await record.save();
+        }
+      }
+
+      days.push({ date: dateStr, isSuccess, totalCalories });
     }
 
     return res.status(200).json({
@@ -69,6 +82,7 @@ exports.getCalendarTracking = async (req, res) => {
     });
   }
 };
+
 
 exports.getTrackingByDate = async (req, res) => {
   const userId = req.user.userId;
