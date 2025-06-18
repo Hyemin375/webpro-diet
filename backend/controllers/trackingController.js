@@ -5,7 +5,7 @@ const { Tracking, TrackingDetails, User, Goal } = require('../models'); // Goal 
 exports.getCalendarTracking = async (req, res) => {
   try {
     const userId = req.user.userId;
-    const { year, month } = req.body;
+    const { year, month } = req.query;
 
     if ((year && isNaN(year)) || (month && (isNaN(month) || month < 1 || month > 12))) {
       return res.status(400).json({

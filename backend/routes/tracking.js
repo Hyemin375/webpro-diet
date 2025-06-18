@@ -6,31 +6,29 @@ const authMiddleware = require('../middlewares/auth');
 /**
  * @swagger
  * /api/v1/tracking/calendar:
- *   post:
+ *   get:
  *     tags:
  *       - Tracking
  *     summary: Retrieve calendar tracking data by month
- *     description: "Returns a list of daily tracking data for the specified year and month, including goal achievement status and calories consumed, based on the authenticated user."
+ *     description: Returns a list of daily tracking data for the specified year and month, including goal achievement status and calories consumed, based on the authenticated user.
  *     security:
  *       - bearerAuth: []
- *     requestBody:
- *       required: false
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               year:
- *                 type: integer
- *                 example: 2025
- *                 description: "Year to fetch tracking data for (defaults to current year)."
- *               month:
- *                 type: integer
- *                 example: 5
- *                 description: "Month to fetch tracking data for (1–12, defaults to current month)."
+ *     parameters:
+ *       - in: query
+ *         name: year
+ *         schema:
+ *           type: integer
+ *         example: 2025
+ *         description: Year to fetch tracking data for (defaults to current year).
+ *       - in: query
+ *         name: month
+ *         schema:
+ *           type: integer
+ *         example: 5
+ *         description: Month to fetch tracking data for (1–12, defaults to current month).
  *     responses:
  *       200:
- *         description: "Successfully retrieved tracking data for the month."
+ *         description: Successfully retrieved tracking data for the month.
  *         content:
  *           application/json:
  *             schema:
@@ -64,7 +62,7 @@ const authMiddleware = require('../middlewares/auth');
  *                             type: integer
  *                             example: 1850
  *       400:
- *         description: "Invalid year or month format."
+ *         description: Invalid year or month format.
  *         content:
  *           application/json:
  *             schema:
@@ -77,7 +75,7 @@ const authMiddleware = require('../middlewares/auth');
  *                   type: string
  *                   example: Invalid year or month. Month must be 1–12 and year must be a valid number.
  *       500:
- *         description: "Server error occurred while fetching tracking data."
+ *         description: Server error occurred while fetching tracking data.
  *         content:
  *           application/json:
  *             schema:
