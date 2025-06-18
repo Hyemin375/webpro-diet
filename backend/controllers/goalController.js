@@ -304,7 +304,7 @@ exports.getProgress = async (req, res) => {
 
 function calcAvg(trackings, goalCalories) {
   if (!trackings.length || !goalCalories) return 0.0;
-  const sum = trackings.reduce((acc, t) => acc + (t.caloriesConsumed / goalCalories) * 100, 0);
+  const sum = trackings.reduce((acc, t) => acc + (t.totalCalories/ goalCalories) * 100, 0);
   return parseFloat((sum / trackings.length).toFixed(1));
 }
 
