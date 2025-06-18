@@ -107,11 +107,15 @@ function generateCalendar(year, month) {
     cell.textContent = day;
     cell.classList.add("calendar-cell");
     if (mealData[dateStr]) cell.classList.add("has-data");
-    if (selectedDate === dateStr) cell.classList.add("selected-day");
+    if (selectedDate && dateStr === selectedDate) cell.classList.add("selected-day");
 
     cell.addEventListener("click", () => {
       selectedDate = dateStr;
-      document.getElementById("selected-date-text").textContent = selectedDate;
+
+       const shownDate = new Date(new Date(dateStr).getTime() + 86400000)
+        .toISOString()
+        .split("T")[0];
+      document.getElementById("selected-date-text").textContent = shownDate;
       loadMealsForDate(selectedDate);
       document.getElementById("meal-info-section").classList.remove("hidden");
       document.getElementById("add-meal-form-section").classList.remove("hidden");
