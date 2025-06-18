@@ -99,58 +99,6 @@ function applyProgressColor(progress) {
 }
 
 
-document.getElementById("trackingForm").addEventListener("submit", async function (e) {
-  e.preventDefault();
-
-  const token = localStorage.getItem("token");
-  if (!token) {
-    alert("You must be logged in.");
-    return;
-  }
-
-  const date = document.getElementById("date").value;
-  const mealType = document.getElementById("mealType").value;
-  const food = document.getElementById("food").value;
-  const calories = parseInt(document.getElementById("calories").value);
-  const protein = parseFloat(document.getElementById("protein").value) || 0;
-  const fat = parseFloat(document.getElementById("fat").value) || 0;
-  const carbohydrate = parseFloat(document.getElementById("carbohydrate").value) || 0;
-  const sugar = parseFloat(document.getElementById("sugar").value) || 0;
-  const cholesterol = parseFloat(document.getElementById("cholesterol").value) || 0;
-
-  try {
-    const response = await fetch(`http://localhost:4000/api/v1/tracking/${date}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        mealType,
-        food,
-        calories,
-        protein,
-        fat,
-        carbohydrate,
-        sugar,
-        cholesterol,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (response.status === 201) {
-      alert("Meal successfully logged!");
-    } else {
-      alert(`❌ Failed to log meal: ${data.message}`);
-    }
-  } catch (err) {
-    console.error("Error logging meal:", err);
-    alert("Server error. Please try again later.");
-  }
-});
-
-
 document.addEventListener('DOMContentLoaded', () => {
   
   document.getElementById('prev-month').addEventListener('click', () => {

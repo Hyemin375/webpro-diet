@@ -220,6 +220,76 @@ section {
   background-color: #388e3c;
 }
 
+/* 선택한 날짜의 식사 정보 */
+#meal-info-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+#meal-info-section li {
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+  background: #f7f7f7;
+  border-radius: 8px;
+  border-left: 5px solid #4CAF50;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#meal-info-section li:hover {
+  background-color: #e0f2e9;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.calendar-day {
+  padding: 1rem;
+  background-color: #f0f0f0;
+  text-align: center;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.success-day {
+  background-color: #c8f7c5;
+}
+
+.fail-day {
+  background-color: #f8d7da;
+}
+
+#mealForm label {
+  display: block;
+  margin-top: 0.5rem;
+}
+
+#add-meal-form-section {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f8f8f8;
+  border-radius: 8px;
+}
+
+#add-meal-form input,
+#add-meal-form button {
+  display: block;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  width: 100%;
+}
+
+.selected-day {
+  background-color: #4CAF50;
+  color: white;
+  border-radius: 50%;
+}
+
+
 /* ==== Footer ==== */
 footer {
   text-align: center;

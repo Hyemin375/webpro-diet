@@ -36,6 +36,20 @@ document.addEventListener('DOMContentLoaded', () => {
     return weightKg / (heightM * heightM);
   }
 
+  function applyProgressColor(bar) {
+    const ratio = bar.value / bar.max;
+    if (ratio >= 1) {
+      bar.style.backgroundColor = '#4CAF50'; // 초록
+    } else if (ratio >= 0.75) {
+      bar.style.backgroundColor = '#FFC107'; // 노랑
+    } else if (ratio >= 0.5) {
+      bar.style.backgroundColor = '#FF9800'; // 주황
+    } else {
+      bar.style.backgroundColor = '#F44336'; // 빨강
+    }
+  }
+
+
   function getRecommendedGoals(bmi) {
     if (bmi < 18.5) return { calories: 2200, protein: 90, fat: 60, carbohydrate: 300, sugar: 30, cholesterol: 200 };
     if (bmi < 25) return { calories: 2000, protein: 75, fat: 55, carbohydrate: 250, sugar: 25, cholesterol: 180 };
@@ -75,9 +89,6 @@ document.addEventListener('DOMContentLoaded', () => {
         bmiText.innerHTML = `BMI: ${bmi.toFixed(1)} | Target Calories: <span id="target-calories">${cal}</span> kcal`;
       }
     }
-
-    const proteinEl = document.querySelectorAll('.goal-status strong')[1];
-    if (proteinEl) proteinEl.textContent = `85 / ${pro} g`;
 
     const bars = document.querySelectorAll('.goal-status .progress-bar');
     if (bars[0]) bars[0].max = cal;
@@ -244,6 +255,39 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+ async function updateGoalStatus() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1; // 👈 0-based → 1-based
+
+    try {
+      const res = await fetch("http://localhost:4000/api/v1/tracking/calendar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ year, month })
+      });
+
+      if (!res.ok) throw new Error("Fetch failed");
+
+      const data = await res.json();
+      console.log("✅ 목표 달성 데이터:", data);
+
+      // 👉 예시: 오늘 날짜 기준으로 consumed 칼로리 넣기
+      const today = now.toISOString().split("T")[0];
+      const todayData = data.data.days.find(d => d.date === today);
+
+      if (todayData) {
+        document.querySelector(".goal-status .curr-val").textContent = todayData.caloriesConsumed;
+        // 추가적으로 퍼센트나 색상 갱신 등 UI 업데이트 가능
+      }
+
+    } catch (err) {
+      console.error("목표 상태 불러오기 실패:", err);
+    }
+  }
+
+
+
   // Event Listeners
   dom.openBtn?.addEventListener('click', () => {
     dom.popup.classList.remove('hidden');
@@ -261,4 +305,5 @@ document.addEventListener('DOMContentLoaded', () => {
   loadGoal();
   loadGoalProgress();
   handleAvatarEmoji();
+  updateGoalStatus();
 });

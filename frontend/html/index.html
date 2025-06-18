@@ -87,25 +87,6 @@
       </div>
     </div>
 
-    <form id="trackingForm">
-      <input type="date" id="date" required />
-      <select id="mealType" required>
-        <option value="">Select Meal</option>
-        <option value="breakfast">Breakfast</option>
-        <option value="lunch">Lunch</option>
-        <option value="dinner">Dinner</option>
-        <option value="snack">Snack</option>
-      </select>
-      <input type="text" id="food" placeholder="Food Name" required />
-      <input type="number" id="calories" placeholder="Calories" required />
-      <input type="number" id="protein" placeholder="Protein" />
-      <input type="number" id="fat" placeholder="Fat" />
-      <input type="number" id="carbohydrate" placeholder="Carbohydrates" />
-      <input type="number" id="sugar" placeholder="Sugar" />
-      <input type="number" id="cholesterol" placeholder="Cholesterol" />
-      <button type="submit">Save Meal</button>
-    </form>
-
     <!-- 🔹 캘린더 -->
     <section class="calendar">
       <h2>Calendar</h2>
@@ -117,6 +98,30 @@
       </div>
       <div id="calendar-placeholder">Calendar will be displayed here</div>
     </section>
+
+    <!-- 🔹 선택한 날짜의 식사 정보 표시 -->
+    <section id="meal-info-section" class="hidden">
+      <h3>Meals for <span id="selected-date-text"></span></h3>
+      <ul id="meal-list"></ul>
+    </section>
+
+    <!-- 🔹 식사 추가 폼 -->
+    <section id="add-meal-form-section" class="hidden">
+      <h3>Add Meal</h3>
+      <form id="add-meal-form">
+        <input id="date" type="date" required />
+        <input id="mealType" type="text" placeholder="Meal Type" required />
+        <input id="food" type="text" placeholder="Food Name" required />
+        <input id="calories" type="number" placeholder="Calories" required />
+        <input id="protein" type="number" placeholder="Protein (g)" />
+        <input id="fat" type="number" placeholder="Fat (g)" />
+        <input id="carbohydrate" type="number" placeholder="Carbohydrates (g)" />
+        <input id="sugar" type="number" placeholder="Sugar (g)" />
+        <input id="cholesterol" type="number" placeholder="Cholesterol (mg)" />
+        <button type="submit">Add Meal</button>
+      </form>
+    </section>
+
 
     <!-- 모달 창 -->
     <div id="edit-modal" class="popup hidden">
@@ -144,8 +149,9 @@
     <p>&copy; 2025 Diet Calendar App</p>
   </footer>
 
-  <script src="../script/script.js" defer></script>
+  <script src="../script/calender.js" defer></script>
   <script src="../script/auth.js"></script>
   <script src="../script/goal.js" defer></script>
+
 </body>
 </html>
