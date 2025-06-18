@@ -1,6 +1,6 @@
 let currentDate = new Date();
 let selectedDate = null;
-let mealData = {}; // 날짜별 식사 정보 저장
+let mealData = {};
 
 const API_BASE = "http://localhost:4000/api/v1";
 const token = localStorage.getItem("token");
