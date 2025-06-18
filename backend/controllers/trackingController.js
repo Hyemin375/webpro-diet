@@ -101,6 +101,7 @@ exports.getTrackingByDate = async (req, res) => {
       include: [{
         model: TrackingDetails,
         attributes: [
+            'detailId',
             'mealtype', 
             'foodName', 
             'eatCalories', 
@@ -121,6 +122,7 @@ exports.getTrackingByDate = async (req, res) => {
     }
 
     const meals = tracking.TrackingDetails.map(meal => ({
+      detailId: meal.detailId,
       mealType: meal.mealtype,
       foodName: meal.foodName,
       calories: meal.eatCalories,
