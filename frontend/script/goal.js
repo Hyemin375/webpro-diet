@@ -8,7 +8,7 @@ if (urlParams.get('updated') === 'true') {
 document.addEventListener('DOMContentLoaded', () => {
   const token = localStorage.getItem('token');
   if (!token) {
-    alert('Login is required.');
+    console.error("❌ 인증 토큰이 없습니다. 로그인 후 이용해주세요.");
     window.location.href = 'login.html';
     return;
   }
@@ -263,7 +263,10 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const res = await fetch("http://localhost:4000/api/v1/tracking/calendar", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+         headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({ year, month })
       });
 

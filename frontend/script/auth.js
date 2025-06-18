@@ -47,6 +47,11 @@ document.addEventListener("DOMContentLoaded", function () {
           localStorage.setItem('token', data.accessToken);
           localStorage.setItem('userLoginId', userLoginId);
           localStorage.setItem('isLoggedIn', 'true');
+
+          setTimeout(() => {
+            window.location.href = "index.html";
+          }, 100);
+
           alert("Login successful!");
           window.location.href = "index.html";
         } else {
