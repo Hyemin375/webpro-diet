@@ -214,10 +214,11 @@ function loadMealsForDate(date) {
   ul.innerHTML = "";
 
   const meals = mealData[date] || [];
+  console.log(meals);
   meals.forEach((meal, index) => {
     const li = document.createElement("li");
     li.innerHTML = `
-      <strong>${meal.mealType.toUpperCase()}</strong> - ${meal.food} 
+      <strong>${meal.mealType.toUpperCase()}</strong> - ${meal.foodName} 
       (${meal.calories} kcal, ${meal.protein}g protein)
       <button class="edit-btn" data-index="${index}">Edit</button>
       <button class="delete-btn" data-index="${index}">🗑️</button>
@@ -235,8 +236,10 @@ function loadMealsForDate(date) {
 }
 
 function openEditModal(date, index) {
+  fetchMealsForDate(date);
   const meal = mealData[date][index];
-  document.getElementById("edit-food").value = meal.food;
+  
+  document.getElementById("edit-food").value = meal.foodName;
   document.getElementById("edit-calories").value = meal.calories;
   document.getElementById("edit-meal-type").value = meal.mealType;
   document.getElementById("edit-protein").value = meal.protein;
@@ -261,8 +264,9 @@ function openEditModal(date, index) {
 
   const detailId = mealData[date][index].id; // 서버에서 받은 식사 id
 
+
   try {
-      const response = await fetch(`${API_BASE}/tracking/${date}/${detailId}`, {
+      const response = await fetch(`http://localhost:4000/api/v1/tracking/calendar/${date}/${detailId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

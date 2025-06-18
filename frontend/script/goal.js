@@ -78,18 +78,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const cal = goal.calories || 0;
     const pro = goal.protein || 0;
 
-    const targetEl = document.getElementById('target-calories');
-    const targetValEl = document.getElementById('target-val');
-    if (targetEl) targetEl.textContent = cal;
-    if (targetValEl) targetValEl.textContent = cal;
+    console.log("cal", cal, "pro", pro);
 
+    // 🔹 칼로리 숫자 바꾸기
+    const calSpan = document.getElementById('target-calories');
+    if (calSpan) calSpan.textContent = cal;
+    document.querySelector(".today-max").textContent = cal;
+    document.querySelector(".protein-max").textContent = pro;
+    console.log(cal);
+
+    // 🔹 BMI 숫자 바꾸기
     if (bmi !== null) {
-      const bmiText = document.querySelector('.user-profile p');
-      if (bmiText) {
-        bmiText.innerHTML = `BMI: ${bmi.toFixed(1)} | Target Calories: <span id="target-calories">${cal}</span> kcal`;
-      }
+      const bmiSpan = document.getElementById('bmi');
+      if (bmiSpan) bmiSpan.textContent = bmi.toFixed(1);
     }
 
+    // 🔹 프로그레스 바의 max 값 바꾸기
     const bars = document.querySelectorAll('.goal-status .progress-bar');
     if (bars[0]) bars[0].max = cal;
     if (bars[1]) bars[1].max = pro;
@@ -108,6 +112,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (!res.ok) return console.warn('❌ Failed to load goal:', res.status);
       const { goal } = await res.json();
+
+      console.log(goal);
 
       Object.entries(goal).forEach(([key, val]) => {
         const inputKey = `input${key.charAt(0).toUpperCase() + key.slice(1)}`;
@@ -177,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const percent = (today / target) * 100;
     const emoji = percent >= 100 ? '😆' : percent >= 80 ? '😊' : percent >= 50 ? '🥲' : '😭';
 
-    avatar.outerHTML = `<div id="avatar" style="font-size: 3rem;">${emoji}</div>`;
+    avatar.innerHTML = `<span style="font-size: 3rem;">${emoji}</span>`;
   }
 
   async function saveGoal() {
@@ -215,6 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateGoalUI(result.goal, bmi);
         await updateGoalStatus();
+        await loadGoalProgress();
         handleAvatarEmoji();
       } else {
         alert('❌ Failed to save: ' + (result.message || 'Unknown error'));
@@ -259,15 +266,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
- async function updateGoalStatus() {
+  async function updateGoalStatus() {
     const now = new Date();
     const year = now.getFullYear();
-    const month = now.getMonth() + 1; // 👈 0-based → 1-based
+    const month = now.getMonth() + 1;
 
     try {
       const res = await fetch("http://localhost:4000/api/v1/tracking/calendar", {
         method: "POST",
-         headers: {
+        headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
         },
@@ -279,26 +286,75 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await res.json();
       console.log("✅ 목표 달성 데이터:", data);
 
-      // 👉 예시: 오늘 날짜 기준으로 consumed 칼로리 넣기
       const today = now.toISOString().split("T")[0];
       const todayData = data.data.days.find(d => d.date === today);
 
       if (todayData) {
-        document.querySelector(".goal-status .curr-val").textContent = todayData.caloriesConsumed;
-        // 추가적으로 퍼센트나 색상 갱신 등 UI 업데이트 가능
+        const cal = todayData.caloriesGoal;
+        const consumed = todayData.caloriesConsumed;
+        const percent = (consumed / cal) * 100;
+
+        document.querySelector(".today-val").textContent = consumed;
+        document.querySelector(".today-max").textContent = cal;
+        document.querySelector(".today-percent").textContent = percent.toFixed(1);
+        const bar = document.querySelector(".today-bar");
+        if (bar) {
+          bar.value = consumed;
+          bar.max = cal;
+          applyProgressColor(bar);
+        }
       }
+
+      // ✅ 단백질 정보 반영
+      const protein = todayData?.protein || {};
+      if (protein.goal && protein.consumed) {
+        const percent = (protein.consumed / protein.goal) * 100;
+        document.querySelector(".protein-val").textContent = protein.consumed;
+        document.querySelector(".protein-max").textContent = protein.goal;
+        document.querySelector(".protein-percent").textContent = percent.toFixed(1);
+        const bar = document.querySelector(".protein-bar");
+        if (bar) {
+          bar.value = protein.consumed;
+          bar.max = protein.goal;
+          applyProgressColor(bar);
+        }
+      }
+
+      // ✅ 지난 주
+      const avgWeek = data.data.summary.last7days.averageAchievedPercent;
+      const maxWeek = todayData.caloriesGoal * 7;
+      const weekVal = Math.round((avgWeek / 100) * maxWeek);
+      document.querySelector(".week-val").textContent = weekVal;
+      document.querySelector(".week-max").textContent = maxWeek;
+      document.querySelector(".week-percent").textContent = avgWeek.toFixed(1);
+      document.querySelector(".week-bar").value = weekVal;
+      document.querySelector(".week-bar").max = maxWeek;
+
+      // ✅ 지난 달
+      const avgMonth = data.data.summary.last30days.averageAchievedPercent;
+      const maxMonth = todayData.caloriesGoal * 30;
+      const monthVal = Math.round((avgMonth / 100) * maxMonth);
+      document.querySelector(".month-val").textContent = monthVal;
+      document.querySelector(".month-max").textContent = maxMonth;
+      document.querySelector(".month-percent").textContent = avgMonth.toFixed(1);
+      document.querySelector(".month-bar").value = monthVal;
+      document.querySelector(".month-bar").max = maxMonth;
 
     } catch (err) {
       console.error("목표 상태 불러오기 실패:", err);
     }
   }
 
+
   // Event Listeners
   dom.openBtn?.addEventListener('click', () => {
     dom.popup.classList.remove('hidden');
     loadGoal();
   });
-  dom.closePopup?.addEventListener('click', () => dom.popup.classList.add('hidden'));
+  dom.closePopup?.addEventListener('click', () => {
+    dom.popup.classList.add('hidden')
+    
+  });
   dom.saveBtn?.addEventListener('click', saveGoal);
   dom.reloadBtn?.addEventListener('click', () => {
     loadGoal();
